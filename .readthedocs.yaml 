@@ -1,0 +1,12 @@
+version: "1"
+
+build:
+  tools:
+    python: "3.10"
+
+python:
+  install:
+    - requirements: requirements-doc.txt
+
+sphinx:
+  configuration: docs/conf.py

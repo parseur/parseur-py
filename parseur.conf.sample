@@ -1,0 +1,3 @@
+[parseur]
+api_token = abc123
+base_url = https://api.parseur.com

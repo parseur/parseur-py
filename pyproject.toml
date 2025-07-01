@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "parseur-py"
+version = "0.0.1"
+description = "A Python client for the Parseur.com API to manage mailboxes, documents, uploads, and listen for new parsing events."
+authors = [
+    { name = "Parseur Team", email = "admin@parseur.com" }
+]
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "click>=8.2.1",
+    "requests>=2.31.0",
+    "marshmallow>=4.0.0",
+]
+
+[project.scripts]
+parseur = "parseur.cli:cli"
+
+[project.urls]
+Homepage = "https://github.com/parseur/parseur-py"
+Repository = "https://github.com/parseur/parseur-py"
+Issues = "https://github.com/parseur/parseur-py/issues"
+
+[tool.setuptools]
+packages = ["parseur"]
