@@ -20,6 +20,10 @@ A modern, easy-to-use library and command-line tool to interact with the Parseur
    :target: https://opensource.org/licenses/MIT
    :alt: License: MIT
 
+.. image:: https://readthedocs.org/projects/parseur-py/badge/?version=latest
+   :target: https://parseur-py.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
+
 ---
 
 **Links:**

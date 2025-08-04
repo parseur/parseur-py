@@ -7,6 +7,7 @@ Built to help you automate document parsing at scale, parseur-py makes integrati
 [![GitHub Repo](https://img.shields.io/badge/GitHub-parseur--py-blue?logo=github)](https://github.com/parseur/parseur-py)
 [![PyPI version](https://badge.fury.io/py/parseur-py.svg)](https://badge.fury.io/py/parseur-py)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Read the Docs](https://readthedocs.org/projects/parseur-py/badge/?version=latest)](https://parseur-py.readthedocs.io/en/latest/?badge=latest)
 
 ---
 
