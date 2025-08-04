@@ -1,6 +1,8 @@
 # 🤖🧙parseur-py
 
-**parseur-py** is a modern Python client for the [Parseur](https://parseur.com) API. It lets you **manage mailboxes, documents, uploads, and webhooks** programmatically or from the command line.
+**parseur-py** is a modern Python client for the [Parseur](https://parseur.com) API.
+
+It lets you **manage mailboxes, documents, uploads, and webhooks** programmatically or from the command line.
 
 Built to help you automate document parsing at scale, parseur-py makes integrating with Parseur fast, easy, and Pythonic.
 
