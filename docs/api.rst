@@ -30,8 +30,8 @@ The CLI can save and load configuration from a file:
 
 - By default: ``~/.parseur.conf``
 - Fields:
-  - **api_key**: Your Parseur API token
-  - **api_base**: (Optional) Override the Parseur API base URL
+    - **api_key**: Your Parseur API token
+    - **api_base**: (Optional) Override the Parseur API base URL
 
 Example:
 
