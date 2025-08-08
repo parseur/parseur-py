@@ -24,8 +24,6 @@ class Client:
         headers = cls.auth_headers(json="json" in kwargs)
         response = requests.request(method, url, headers=headers, **kwargs)
         response.raise_for_status()
-        if response.status_code == 204:
-            return None
         return response.json()
 
     @classmethod

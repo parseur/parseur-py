@@ -1,4 +1,5 @@
 from datetime import datetime
+import tempfile
 from unittest.mock import MagicMock, patch
 
 import parseur
@@ -205,7 +206,8 @@ def test_delete_document(mock_request):
 
 
 @patch("parseur.client.Client.request")
-def test_upload_text_returns_document(mock_request):
+def test_upload_text_returns_document(mock_request, document_upload_text_data):
+    mock_request.return_value = document_upload_text_data
     result = parseur.Document.upload_text(
         recipient="inbox@robot.parseur.com",
         subject="Test Subject",
@@ -226,6 +228,39 @@ def test_upload_text_returns_document(mock_request):
     assert payload["from"] == "me@ex.com"
     assert payload["body_html"] == "<b>Hello</b>"
     assert payload["body_plain"] == "Hello"
+
+    assert result["message"] == result.message == "OK"
+    assert (
+        result["DocumentID"] == result.DocumentID == "753ec679789a4b1ebea629f630db6f29"
+    )
+
+
+@patch("parseur.client.Client.request")
+def test_upload_file_returns_document(mock_request, document_upload_file_data):
+    mock_request.return_value = document_upload_file_data
+
+    with tempfile.NamedTemporaryFile() as fd:
+        result = parseur.Document.upload_file(mailbox_id=120, file_path=fd.name)
+
+        mock_request.assert_called_once()
+        method, url = mock_request.call_args[0]
+        files = mock_request.call_args[1]["files"]
+
+        assert method == "POST"
+        assert url == "/parser/120/upload"
+        assert files["file"].name == fd.name
+
+        assert result["message"] == result.message == "OK"
+        assert (
+            result["attachments"]
+            == result.attachments
+            == [
+                {
+                    "DocumentID": "daf8799eedc342ff93f824eaeb327171",
+                    "name": "April-3765.pdf",
+                }
+            ]
+        )
 
 
 @patch("parseur.client.requests.get")

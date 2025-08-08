@@ -721,3 +721,15 @@ DOCUMENT_LOG_RESPONSE = {
         },
     ],
 }
+
+DOCUMENT_UPLOAD_FILE_RESPONSE = {
+    "attachments": [
+        {"DocumentID": "daf8799eedc342ff93f824eaeb327171", "name": "April-3765.pdf"}
+    ],
+    "message": "OK",
+}
+
+DOCUMENT_UPLOAD_TEXT_RESPONSE = {
+    "DocumentID": "753ec679789a4b1ebea629f630db6f29",
+    "message": "OK",
+}

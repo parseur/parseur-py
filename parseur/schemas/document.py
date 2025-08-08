@@ -114,3 +114,14 @@ class DocumentLogSchema(BaseSchema):
             except (TypeError, ValueError):
                 pass
         return data
+
+
+class AttachmentSchema(BaseSchema):
+    DocumentID = fields.String(required=True)
+    name = fields.String(required=True)
+
+
+class DocumentUploadSchema(BaseSchema):
+    DocumentID = fields.String(allow_none=True)
+    attachments = fields.List(fields.Nested(AttachmentSchema), allow_none=True)
+    message = fields.String(required=True)

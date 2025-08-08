@@ -7,7 +7,11 @@ from typing import Dict, Iterable, List, Optional
 
 from parseur.client import Client
 from parseur.decorator import rate_limited_batch
-from parseur.schemas.document import DocumentLogSchema, DocumentSchema
+from parseur.schemas.document import (
+    DocumentLogSchema,
+    DocumentSchema,
+    DocumentUploadSchema,
+)
 
 
 class DocumentOrderKey(str, Enum):
@@ -42,6 +46,11 @@ class Document:
     def log_from_response(cls, data: Dict) -> Dict:
         """Validate and deserialize a single document log dict."""
         return DocumentLogSchema().load(data)
+
+    @classmethod
+    def upload_from_response(cls, data: Dict) -> Dict:
+        """Validate and deserialize a single document log dict."""
+        return DocumentUploadSchema().load(data)
 
     @classmethod
     def iter(
@@ -164,13 +173,8 @@ class Document:
     def upload_file(cls, mailbox_id: int, file_path: str) -> Dict:
         with open(file_path, "rb") as file:
             files = {"file": file}
-            response = Client.request(
-                "POST", f"/parser/{mailbox_id}/upload", files=files
-            )
-            if response.status_code >= 400:
-                logging.error(f"API Error {response.status_code}: {response.text}")
-                response.raise_for_status()
-            return response.json()
+            raw = Client.request("POST", f"/parser/{mailbox_id}/upload", files=files)
+            return cls.upload_from_response(raw)
 
     @classmethod
     @rate_limited_batch()
@@ -209,4 +213,5 @@ class Document:
         logging.info(
             f"Uploading text to Parseur: recipient={recipient}, subject={subject}"
         )
-        return Client.request("POST", "/email", json=data)
+        raw = Client.request("POST", "/email", json=data)
+        return cls.upload_from_response(raw)

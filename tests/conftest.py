@@ -5,6 +5,8 @@ from samples.document import (
     DOCUMENT_LIST_RESPONSE,
     DOCUMENT_LOG_RESPONSE,
     DOCUMENT_RESPONSE,
+    DOCUMENT_UPLOAD_FILE_RESPONSE,
+    DOCUMENT_UPLOAD_TEXT_RESPONSE,
 )
 from samples.mailbox import MAILBOX_LIST_RESPONSE, MAILBOX_RESPONSE
 from samples.webhook import WEBHOOK_LIST_RESPONSE, WEBHOOK_RESPONSE
@@ -39,6 +41,16 @@ def document_list_data():
 @pytest.fixture()
 def document_log_data():
     return DOCUMENT_LOG_RESPONSE
+
+
+@pytest.fixture()
+def document_upload_text_data():
+    return DOCUMENT_UPLOAD_TEXT_RESPONSE
+
+
+@pytest.fixture()
+def document_upload_file_data():
+    return DOCUMENT_UPLOAD_FILE_RESPONSE
 
 
 @pytest.fixture()
