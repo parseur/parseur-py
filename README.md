@@ -190,7 +190,7 @@ import parseur
 parseur.api_key = "YOUR_API_KEY"
 
 for mailbox in parseur.Mailbox.list():
-    print(mailbox["name"])
+    print(mailbox.name)
 ```
 
 ---
