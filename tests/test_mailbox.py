@@ -66,7 +66,11 @@ def test_list_mailboxes(mock_request, mailbox_list_data):
     )
     assert mailbox1.split_page == mailbox1["split_page"] == 2
     assert mailbox1.page_range_set == mailbox1["page_range_set"] == []
-    assert mailbox1.split_page_range_set == mailbox1["split_page_range_set"] == []
+    assert (
+        mailbox1.split_page_range_set
+        == mailbox1["split_page_range_set"]
+        == [{"start_index": 1, "end_index": 5}, {"start_index": 8, "end_index": None}]
+    )
 
     assert mailbox1.template_count == mailbox1["template_count"] == 0
     assert mailbox1.webhook_count == mailbox1["webhook_count"] == 0

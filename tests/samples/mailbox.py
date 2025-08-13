@@ -304,7 +304,10 @@ MAILBOX_LIST_RESPONSE = {
                 {"keyword": "titi", "is_before": False},
             ],
             "split_page": 2,
-            "split_page_range_set": [],
+            "split_page_range_set": [
+                {"start_index": 1, "end_index": 5},
+                {"start_index": 8, "end_index": None},
+            ],
             "template_count": 0,
             "webhook_count": 0,
             "attachments_field": False,

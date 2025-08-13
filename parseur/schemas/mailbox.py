@@ -6,6 +6,11 @@ from parseur.schemas.paserfield import ParserFieldSchema, TableFieldSchema
 from parseur.schemas.webhook import WebhookSchema
 
 
+class PageRangeSchema(BaseSchema):
+    start_index = fields.Int(required=True)
+    end_index = fields.Int(allow_none=True)
+
+
 class SplitKeyWordsSchema(BaseSchema):
     is_before = fields.Boolean(required=True)
     keyword = fields.String(required=True)
@@ -85,7 +90,7 @@ class MailboxSchema(BaseSchema):
     # Page processing: only odd pages (1, 3, 5, ...)
     odd_pages = fields.Boolean(required=True)
     # Page processing: only this page ranges. (same as split_page_range_set)
-    page_range_set = fields.List(fields.Dict(), required=True)
+    page_range_set = fields.Nested(PageRangeSchema, allow_none=True, many=True)
 
     # Split documents every N pages.
     split_page = fields.Int(allow_none=True)
@@ -95,7 +100,7 @@ class MailboxSchema(BaseSchema):
     #   E.g., (1) is last page. Example: 1, 2-(1) splits into two docs:
     #   - first page only
     #   - from page 2 to the end.
-    split_page_range_set = fields.List(fields.Dict(), required=True)
+    split_page_range_set = fields.Nested(PageRangeSchema, allow_none=True, many=True)
     # Split documents by keywords.
     #   Enter the list of keywords to split on.
     #   Supports splitting before or after keywords.
