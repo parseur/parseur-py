@@ -6,6 +6,11 @@ from parseur.schemas.paserfield import ParserFieldSchema, TableFieldSchema
 from parseur.schemas.webhook import WebhookSchema
 
 
+class SplitKeyWordsSchema(BaseSchema):
+    is_before = fields.Boolean(required=True)
+    keyword = fields.String(required=True)
+
+
 class MailboxSchema(BaseSchema):
     id = fields.Int(required=True)
     name = fields.String(required=True)
@@ -95,7 +100,7 @@ class MailboxSchema(BaseSchema):
     #   Enter the list of keywords to split on.
     #   Supports splitting before or after keywords.
     #   Keywords are case-sensitive.
-    split_keywords = fields.String(allow_none=True)
+    split_keywords = fields.Nested(SplitKeyWordsSchema, allow_none=True, many=True)
 
     # Counters
     document_count = fields.Int(allow_none=True)

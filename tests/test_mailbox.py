@@ -56,7 +56,14 @@ def test_list_mailboxes(mock_request, mailbox_list_data):
     assert mailbox1.even_pages == mailbox1["even_pages"] is True
     assert mailbox1.odd_pages == mailbox1["odd_pages"] is True
     assert mailbox1.retention_policy == mailbox1["retention_policy"] == 90
-    assert mailbox1.split_keywords == mailbox1["split_keywords"] is None
+    assert (
+        mailbox1.split_keywords
+        == mailbox1["split_keywords"]
+        == [
+            {"is_before": True, "keyword": "toto"},
+            {"is_before": False, "keyword": "titi"},
+        ]
+    )
     assert mailbox1.split_page == mailbox1["split_page"] == 2
     assert mailbox1.page_range_set == mailbox1["page_range_set"] == []
     assert mailbox1.split_page_range_set == mailbox1["split_page_range_set"] == []

@@ -299,7 +299,10 @@ MAILBOX_LIST_RESPONSE = {
             "parser_object_set_last_modified": "2025-07-03T06:15:24.473802Z",
             "process_attachments": True,
             "retention_policy": 90,
-            "split_keywords": None,
+            "split_keywords": [
+                {"keyword": "toto", "is_before": True},
+                {"keyword": "titi", "is_before": False},
+            ],
             "split_page": 2,
             "split_page_range_set": [],
             "template_count": 0,
