@@ -12,8 +12,8 @@ class Config:
         cfg = configparser.ConfigParser()
         if self.config_path:
             cfg.read(self.config_path)
-        api_key = cfg.get("parseur", "api_key")
-        api_base = cfg.get("parseur", "api_base")
+        api_key = cfg.get("parseur", "api_key", fallback=None)
+        api_base = cfg.get("parseur", "api_base", fallback=None)
         self.api_key = api_key
         self.api_base = api_base
         return cfg
