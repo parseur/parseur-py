@@ -1,7 +1,7 @@
 DOCUMENT_LIST_RESPONSE = {
     "count": 35,
     "current": 1,
-    "total": 2,
+    "total": 1,
     "results": [
         {
             "attached_to": None,

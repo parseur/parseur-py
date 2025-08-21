@@ -32,11 +32,20 @@ class Client:
     ) -> Generator[Dict, None, None]:
         url = urljoin(parseur.api_base, endpoint)
         headers = cls.auth_headers()
-        while url:
-            logging.debug(f"Paginate request: {url}")
+        params = params.copy() if params else {}
+        page = 1
+
+        while True:
+            params["page"] = page
+            logging.debug(f"Paginate request: {url} (page {page})")
             response = requests.get(url, headers=headers, params=params)
             response.raise_for_status()
             data = response.json()
+
             for item in data["results"]:
                 yield item
-            url = data.get("next")
+
+            if data["current"] >= data["total"]:
+                break
+
+            page += 1
