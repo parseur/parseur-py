@@ -1,4 +1,4 @@
-from marshmallow import fields, post_load, validate
+from marshmallow import fields, post_load, pre_load, validate
 
 from parseur.event import ParseurEvent
 from parseur.schemas import BaseSchema
@@ -14,6 +14,14 @@ class WebhookSchema(BaseSchema):
     target = fields.URL(required=True)
     name = fields.String(allow_none=True)
     headers = fields.Dict(keys=fields.String(), values=fields.String(), allow_none=True)
+
+    @pre_load
+    def normalize_empty_fields(self, data, **kwargs):
+        if "headers" in data and data["headers"] == "":
+            data["headers"] = None
+        if "name" in data and data["name"] == "":
+            data["name"] = None
+        return data
 
     @post_load
     def default_empty_headers(self, data, **kwargs):
