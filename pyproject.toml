@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "parseur-py"
-version = "1.1.1"
+version = "1.2.0"
 description = "A Python client for the Parseur.com API to manage mailboxes, documents, uploads, and listen for new parsing events."
 authors = [
     { name = "Parseur Team", email = "admin@parseur.com" }
