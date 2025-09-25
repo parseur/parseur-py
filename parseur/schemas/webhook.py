@@ -11,7 +11,7 @@ class WebhookSchema(BaseSchema):
         required=True,
         validate=validate.OneOf([e.value for e in ParseurEvent]),
     )
-    target = fields.URL(required=True)
+    target = fields.String(required=True)
     name = fields.String(allow_none=True)
     headers = fields.Dict(keys=fields.String(), values=fields.String(), allow_none=True)
 
