@@ -50,8 +50,9 @@ class MailboxSchema(BaseSchema):
     # Advanced settings #
     # ###################
 
-    # Unzip uploaded zipped documents into individual ones.
-    unzip_attachments = fields.Boolean(allow_none=True)
+    # List of allowed file extensions for document processing.
+    #   Example: ["pdf", "docx", "png"]
+    allowed_extensions = fields.List(fields.String(), allow_none=True)
 
     # Force use of OCR on PDFs. Enable if data is garbled or text is in images.
     # Reprocess documents after enabling. May slow down processing.
@@ -69,9 +70,6 @@ class MailboxSchema(BaseSchema):
 
     # Extract XML from HTML comments into separate documents.
     extract_xml_from_comment = fields.Boolean(allow_none=True)
-
-    # Enable processing of image files (BMP, GIF, JPEG, PNG, TIFF).
-    enable_image_ocr = fields.Boolean(allow_none=True)
 
     # Email sender block/allow list.
     #   True = allowlist mode (only allow listed senders).

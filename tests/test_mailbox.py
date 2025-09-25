@@ -52,7 +52,6 @@ def test_list_mailboxes(mock_request, mailbox_list_data):
     assert mailbox1.attachments_only == mailbox1["attachments_only"] is False
     assert mailbox1.process_attachments == mailbox1["process_attachments"] is True
     assert mailbox1.disable_deskew == mailbox1["disable_deskew"] is False
-    assert mailbox1.enable_image_ocr == mailbox1["enable_image_ocr"] is True
     assert mailbox1.even_pages == mailbox1["even_pages"] is True
     assert mailbox1.odd_pages == mailbox1["odd_pages"] is True
     assert mailbox1.retention_policy == mailbox1["retention_policy"] == 90
@@ -165,5 +164,34 @@ def test_list_mailboxes(mock_request, mailbox_list_data):
         == [
             {"id": "PF1406", "name": "vergleichsangebote_vermietung"},
             {"id": "PF1397", "name": "vergleichsangebote_verkauf"},
+        ]
+    )
+    assert (
+        mailbox1.allowed_extensions
+        == mailbox1["allowed_extensions"]
+        == [
+            "bmp",
+            "csv",
+            "doc",
+            "docx",
+            "eml",
+            "gif",
+            "html",
+            "ics",
+            "jpg",
+            "mbox",
+            "msg",
+            "ods",
+            "odt",
+            "pdf",
+            "png",
+            "rtf",
+            "tif",
+            "txt",
+            "xhtml",
+            "xls",
+            "xlsm",
+            "xlsx",
+            "xml",
         ]
     )
