@@ -60,12 +60,16 @@ def list_mailboxes(search, order_by, descending):
 
     order_by_enum = parseur.MailboxOrderKey(order_by) if order_by else None
 
-    mailboxes = parseur.Mailbox.list(
-        search=search,
-        order_by=order_by_enum,
-        ascending=not descending,
-    )
-    click.echo(parseur.to_json(mailboxes))
+    click.echo("[")
+    for idx, mailbox in enumerate(
+        parseur.Mailbox.iter(
+            search=search,
+            order_by=order_by_enum,
+            ascending=not descending,
+        )
+    ):
+        click.echo((", " if idx != 0 else "") + parseur.to_json(mailbox))
+    click.echo("]")
 
 
 @cli.command("get-mailbox")
@@ -134,16 +138,21 @@ def list_documents(
     """
     # Convert order_by string to enum if provided
     order_by_enum = parseur.DocumentOrderKey(order_by) if order_by else None
-    docs = parseur.Document.list(
-        mailbox_id=mailbox_id,
-        search=search,
-        order_by=order_by_enum,
-        ascending=not descending,
-        received_after=received_after,
-        received_before=received_before,
-        with_result=with_result,
-    )
-    click.echo(parseur.to_json(docs))
+
+    click.echo("[")
+    for idx, doc in enumerate(
+        parseur.Document.iter(
+            mailbox_id=mailbox_id,
+            search=search,
+            order_by=order_by_enum,
+            ascending=not descending,
+            received_after=received_after,
+            received_before=received_before,
+            with_result=with_result,
+        )
+    ):
+        click.echo((", " if idx != 0 else "") + parseur.to_json(doc))
+    click.echo("]")
 
 
 @cli.command("get-document")
