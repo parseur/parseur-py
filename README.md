@@ -22,6 +22,7 @@ Built to help you automate document parsing at scale, parseur-py makes integrati
 ✅ Upload documents by file or email content  
 ✅ Reprocess, skip, copy, or delete documents  
 ✅ Manage custom webhooks for real-time events  
+✅ Listen to events in real time with a temporary webhook & tunnel  
 ✅ Fully-featured **Command Line Interface (CLI)**
 
 ---
@@ -32,6 +33,12 @@ Built to help you automate document parsing at scale, parseur-py makes integrati
 
 ```bash
 pip install parseur-py
+```
+
+With event listener support (Flask + localtunnel)
+
+```bash
+pip install parseur-py[listener]
 ```
 
 ### Install the package from source
@@ -92,6 +99,18 @@ Register a custom webhook:
 parseur create-webhook --event document.processed --target-url https://yourserver.com/webhook --mailbox-id 12345
 ```
 
+Listen to events in real time (requires [listener]):
+
+```bash
+parseur listen --event document.processed --mailbox-id 12345
+```
+
+With forwarding:
+
+```bash
+parseur listen --event document.processed --mailbox-id 12345 --redirect-url http://localhost --redirect-port 8000
+```
+
 ---
 
 ## 📜 CLI Commands
@@ -116,6 +135,7 @@ for a full list of available commands.
 - **upload-file / upload-text**: Upload new documents  
 - **create-webhook / get-webhook / list-webhooks / delete-webhook**: Create, get, list, and delete custom webhook integrations.
 - **enable-webhook / pause-webhook**: Activate or pause a webhook for a specific mailbox.
+- **listen**: Create a temporary webhook and listen to events in real time (with optional redirect & silent mode)
 
 ---
 
