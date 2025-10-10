@@ -21,8 +21,9 @@ class MailboxSchema(BaseSchema):
     name = fields.String(required=True)
     email_prefix = fields.String(required=True)
     account_uuid = fields.String(required=True)
+
     ai_engine = fields.String(required=True)
-    secret = fields.String(allow_none=True)
+    ai_instructions = fields.String(allow_none=True)
 
     # ################
     # Basic settings #
@@ -32,6 +33,8 @@ class MailboxSchema(BaseSchema):
         validate=validate.OneOf([".", ","], error="Must be '.' or ',' or null."),
     )
     default_timezone = fields.String(allow_none=True)
+
+    default_language = fields.String(allow_none=True)
 
     # Input date format for parsing dates. Accepts "MONTH_FIRST", "DAY_FIRST", or None.
     #   MONTH_FIRST: mm/dd/yyyy, mm-dd-yyyy
@@ -157,6 +160,7 @@ class MailboxSchema(BaseSchema):
     sender_field = fields.Boolean(required=True)
     sender_name_field = fields.Boolean(required=True)
     split_page_range_field = fields.Boolean(required=True)
+    split_parent_id_field = fields.Boolean(required=True)
     subject_field = fields.Boolean(required=True)
     template_field = fields.Boolean(required=True)
     text_document_field = fields.Boolean(required=True)

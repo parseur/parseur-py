@@ -123,6 +123,7 @@ def test_list_mailboxes(mock_request, mailbox_list_data):
     assert (
         mailbox1.split_page_range_field == mailbox1["split_page_range_field"] is False
     )
+    assert mailbox1.split_parent_id_field == mailbox1["split_parent_id_field"] is False
     assert mailbox1.recipient_field == mailbox1["recipient_field"] is False
     assert mailbox1.to_field == mailbox1["to_field"] is False
     assert mailbox1.cc_field == mailbox1["cc_field"] is False
