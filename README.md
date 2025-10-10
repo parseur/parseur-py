@@ -27,6 +27,20 @@ Built to help you automate document parsing at scale, parseur-py makes integrati
 
 ---
 
+## ⚠️ Disclaimer about Localtunnel
+
+When using the `parseur listen` command (with event listener support), your data is forwarded through **localtunnel servers**.
+
+These servers are **not affiliated with Parseur** and are **not covered** by Parseur’s [Privacy Policy](https://parseur.com/privacy) or [Data Processing Agreement](https://parseur.com/dpa).
+
+Data transmitted through localtunnel is **not encrypted end-to-end**.
+
+➡️ **Use this feature at your own risk.**
+
+For production-grade setups, we strongly recommend configuring your own secure webhook endpoint instead of relying on localtunnel.
+
+---
+
 ## 🚀 Quick Start
 
 ### Install the package
