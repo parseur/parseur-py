@@ -1,8 +1,20 @@
 import sys
+from urllib.parse import urlparse, urlunparse
 
 import click
 
 import parseur
+
+
+def headers_to_dict(headers):
+    headers_dict = {}
+    for h in headers:
+        if ":" not in h:
+            click.echo(f"❌ Invalid header format: {h}")
+            sys.exit(1)
+        key, value = h.split(":", 1)
+        headers_dict[key.strip()] = value.strip()
+    return headers_dict
 
 
 @click.group()
@@ -278,21 +290,14 @@ def create_webhook(event, target_url, mailbox_id, table_field_id, header, name):
     """
     Create a new custom webhook for your Parseur account.
     """
-    headers = {}
-    for h in header:
-        if ":" not in h:
-            click.echo(f"❌ Invalid header format: {h}")
-            sys.exit(1)
-        key, value = h.split(":", 1)
-        headers[key.strip()] = value.strip()
-
+    headers_dict = headers_to_dict(header)
     event_enum = parseur.ParseurEvent(event)
     result = parseur.Webhook.create(
         event=event_enum,
         target_url=target_url,
         mailbox_id=mailbox_id,
         table_field_id=table_field_id,
-        headers=headers or None,
+        headers=headers_dict or None,
         name=name,
     )
     click.echo(parseur.to_json(result))
@@ -349,6 +354,123 @@ def list_webhooks():
     """List all registered webhooks."""
     webhooks = parseur.Webhook.list()
     click.echo(parseur.to_json(webhooks))
+
+
+@cli.command("listen")
+@click.option(
+    "--event",
+    required=True,
+    type=click.Choice([e.value for e in parseur.ParseurEvent]),
+    help="Event type to listen for",
+)
+@click.option(
+    "--mailbox-id",
+    type=int,
+    help="Mailbox ID (required for document events).",
+)
+@click.option(
+    "--table-field-id",
+    type=str,
+    help="Table field ID in 'PF12345' format (required for table events).",
+)
+@click.option(
+    "--header",
+    multiple=True,
+    type=str,
+    help="Custom HTTP header in 'Key:Value' format. Can be used multiple times.",
+)
+@click.option(
+    "--name",
+    type=str,
+    help="Optional name for the webhook.",
+)
+@click.option(
+    "--redirect-url",
+    type=str,
+    help="Optional URL to forward received events to.",
+)
+@click.option(
+    "--redirect-port",
+    type=int,
+    help="Optional local port to forward received events to (http://localhost:<port>).",
+)
+@click.option(
+    "--silent",
+    is_flag=True,
+    default=False,
+    help="Do not print event payloads to stdout.",
+)
+def listen(
+    event,
+    mailbox_id,
+    table_field_id,
+    header,
+    name,
+    redirect_url,
+    redirect_port,
+    silent,
+):
+    """
+    Listen to a Parseur event in real time with a temporary webhook.
+    Example:
+      parseur listen --event document.parsed_ok --mailbox-id 12345
+      parseur listen --event document.processed --mailbox-id 12345 --redirect-url http://localhost --redirect-port 8000
+    """
+    from . import server
+
+    if name is None:
+        name = f"CLI listener for {event}"
+
+    # Check redirect consistency
+    if redirect_port and not redirect_url:
+        raise click.ClickException("--redirect-port requires --redirect-url")
+
+    if redirect_url:
+        try:
+            parsed = urlparse(redirect_url)
+            if not parsed.scheme or not parsed.netloc:
+                raise ValueError("URL missing scheme or host")
+
+            # Rebuild URL with port override if given
+            netloc = parsed.hostname
+            if redirect_port:
+                netloc = f"{parsed.hostname}:{redirect_port}"
+
+            if parsed.username or parsed.password:
+                auth = f"{parsed.username}:{parsed.password}@"
+                netloc = auth + netloc
+
+            redirect_url = urlunparse(
+                (
+                    parsed.scheme,
+                    netloc,
+                    parsed.path or "",
+                    parsed.params,
+                    parsed.query,
+                    parsed.fragment,
+                )
+            )
+
+            click.echo(f"🔁 Events will be forwarded to: {redirect_url}")
+
+        except Exception as e:
+            raise click.ClickException(f"Invalid redirect URL: {redirect_url} ({e})")
+
+    # Parse custom headers
+    headers_dict = headers_to_dict(header)
+
+    event_enum = parseur.ParseurEvent(event)
+
+    # Run the local listener
+    server.run_listener(
+        event=event_enum,
+        mailbox_id=mailbox_id,
+        table_field_id=table_field_id,
+        headers=headers_dict,
+        name=name,
+        redirect_url=redirect_url,
+        silent=silent,
+    )
 
 
 if __name__ == "__main__":

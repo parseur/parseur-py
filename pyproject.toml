@@ -17,6 +17,11 @@ dependencies = [
     "marshmallow>=4.0.0",
 ]
 
+[project.optional-dependencies]
+listener = [
+    "Flask>=3.1.0",
+]
+
 [project.scripts]
 parseur = "parseur.cli:cli"
 
