@@ -104,6 +104,10 @@ class DocumentLogSchema(BaseSchema):
     template = fields.Integer(allow_none=True)
     # Name of the template involved, if any
     template_name = fields.String(allow_none=True)
+    # Initiator of the action, if any
+    initiator = fields.String(allow_none=True)
+    # Initiator name of the action, if any
+    initiator_name = fields.String(allow_none=True)
 
     @pre_load
     def parse_payload_json(self, data, **kwargs):

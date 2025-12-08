@@ -289,9 +289,13 @@ def test_document_logs_returns_logs(mock_request, document_log_data):
     assert log1.message == log1["message"]
     assert log1.message.startswith("Processed with AI")
     assert log1.document == log1["document"] == 2898
+    assert log1.initiator == log1["initiator"] == "support@parseur.com"
+    assert log1.initiator_name == log1["initiator_name"] == "Parseur"
 
     # Log 2 : INCOMING
     assert log2.id == log2["id"] == 6316
     assert log2.code == log2["code"] == "INCOMING"
     assert log2.status == log2["status"] == "INFO"
     assert log2.message == log2["message"] == "Received"
+    assert log2.initiator == log2["initiator"] == "support@parseur.com"
+    assert log2.initiator_name == log2["initiator_name"] == "Parseur"

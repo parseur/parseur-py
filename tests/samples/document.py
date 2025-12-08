@@ -703,6 +703,8 @@ DOCUMENT_LOG_RESPONSE = {
             "source": "DOCUMENT",
             "payload": '{"customer_number": "12345", "date": "1. März 2024", "gross_amount": "453,53 €", "invoice_number": "123100401", "invoice_period": "01.02.2024 - 29.02.2024", "total_amount": "381,12 €", "vat": "72,41 €", "invoice_details": [{"price": "15,82 €", "query_reference": "*Not specified*", "t1": 4.0, "t2": 0.0, "t3": 9.0, "t4": 0.0, "t5": 0.0, "t6": 0.0}, {"price": "18,00 €", "query_reference": "AZR/31/27439", "t1": 0.0, "t2": 0.0, "t3": 12.0, "t4": 0.0, "t5": 0.0, "t6": 0.0}, {"price": "6,00 €", "query_reference": "CCL/3715", "t1": 0.0, "t2": 0.0, "t3": 4.0, "t4": 0.0, "t5": 0.0, "t6": 0.0}, {"price": "56,90 €", "query_reference": "CRS/28432", "t1": 5.0, "t2": 0.0, "t3": 36.0, "t4": 0.0, "t5": 0.0, "t6": 0.0}, {"price": "28,50 €", "query_reference": "Cs/52113", "t1": 0.0, "t2": 0.0, "t3": 19.0, "t4": 0.0, "t5": 0.0, "t6": 0.0}, {"price": "11,08 €", "query_reference": "GS 32090", "t1": 1.0, "t2": 0.0, "t3": 7.0, "t4": 0.0, "t5": 0.0, "t6": 0.0}, {"price": "10,16 €", "query_reference": "Kpi/22695", "t1": 2.0, "t2": 0.0, "t3": 6.0, "t4": 0.0, "t5": 0.0, "t6": 0.0}, {"price": "16,50 €", "query_reference": "PG 7772", "t1": 0.0, "t2": 0.0, "t3": 11.0, "t4": 0.0, "t5": 0.0, "t6": 0.0}, {"price": "22,50 €", "query_reference": "Rjn/11138", "t1": 0.0, "t2": 0.0, "t3": 15.0, "t4": 0.0, "t5": 0.0, "t6": 0.0}, {"price": "7,50 €", "query_reference": "SF-M 596/99-08", "t1": 0.0, "t2": 0.0, "t3": 5.0, "t4": 0.0, "t5": 0.0, "t6": 0.0}, {"price": "35,08 €", "query_reference": "Ttrb/17885", "t1": 1.0, "t2": 0.0, "t3": 23.0, "t4": 0.0, "t5": 0.0, "t6": 0.0}, {"price": "6,58 €", "query_reference": "WPN:24791", "t1": 1.0, "t2": 0.0, "t3": 4.0, "t4": 0.0, "t5": 0.0, "t6": 0.0}, {"price": "16,50 €", "query_reference": "Wwt/15658", "t1": 0.0, "t2": 0.0, "t3": 11.0, "t4": 0.0, "t5": 0.0, "t6": 0.0}]}',
             "message": "Processed with AI. (3 credits used), here is the final result:",
+            "initiator": "support@parseur.com",
+            "initiator_name": "Parseur",
         },
         {
             "id": 6316,
@@ -718,6 +720,8 @@ DOCUMENT_LOG_RESPONSE = {
             "source": "DOCUMENT",
             "payload": None,
             "message": "Received",
+            "initiator": "support@parseur.com",
+            "initiator_name": "Parseur",
         },
     ],
 }
