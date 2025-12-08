@@ -114,14 +114,16 @@ MAILBOX_RESPONSE = {
             "id": "PF951",
             "name": "Sheet",
             "format": "TABLE",
-            "is_optional": True,
+            "is_required": False,
+            "used_by_ai": True,
             "query": None,
             "parser_object_set": [
                 {
                     "id": "PF952",
                     "name": "Assegnatario",
                     "format": "TEXT",
-                    "is_optional": None,
+                    "is_required": False,
+                    "used_by_ai": True,
                     "query": None,
                     "json_download": "/parser_field/9V_NMA9iUvf8RCR82aH0Y_o8kTfDK_v7mToPKSXaNdsO9ArNXN39Nk-dliGMfcv-/download/Assegnatario.json",
                     "csv_download": "/parser_field/9V_NMA9iUvf8RCR82aH0Y_o8kTfDK_v7mToPKSXaNdsO9ArNXN39Nk-dliGMfcv-/download/Assegnatario.csv",
@@ -132,7 +134,8 @@ MAILBOX_RESPONSE = {
                     "id": "PF953",
                     "name": "Penskecars.it",
                     "format": "TEXT",
-                    "is_optional": None,
+                    "is_required": False,
+                    "used_by_ai": True,
                     "query": None,
                     "json_download": "/parser_field/HoqXjz_TM8Oh-ThDP8c5F.RAj7URnaEHstzFNo-e4JCGcYIzNRfwFL_cJRhNMp1S/download/Penskecars.it.json",
                     "csv_download": "/parser_field/HoqXjz_TM8Oh-ThDP8c5F.RAj7URnaEHstzFNo-e4JCGcYIzNRfwFL_cJRhNMp1S/download/Penskecars.it.csv",
@@ -143,7 +146,8 @@ MAILBOX_RESPONSE = {
                     "id": "PF954",
                     "name": "Telefonata",
                     "format": "TEXT",
-                    "is_optional": None,
+                    "is_required": False,
+                    "used_by_ai": True,
                     "query": None,
                     "json_download": "/parser_field/zHNW_uo_wgcOVnEXDv.i70P63-FF31Rwwr_y26PY.w6nTSUc06FWFcZM5UEGtouT/download/Telefonata.json",
                     "csv_download": "/parser_field/zHNW_uo_wgcOVnEXDv.i70P63-FF31Rwwr_y26PY.w6nTSUc06FWFcZM5UEGtouT/download/Telefonata.csv",
@@ -154,7 +158,8 @@ MAILBOX_RESPONSE = {
                     "id": "PF955",
                     "name": "Total Result",
                     "format": "TEXT",
-                    "is_optional": None,
+                    "is_required": False,
+                    "used_by_ai": True,
                     "query": None,
                     "json_download": "/parser_field/SNDkQmmhPXbNZReFQOyzAjsHS8P5HWAsKQowETtwRdQ0h_hqgdrflGD7KAANbW6Y/download/TotalResult.json",
                     "csv_download": "/parser_field/SNDkQmmhPXbNZReFQOyzAjsHS8P5HWAsKQowETtwRdQ0h_hqgdrflGD7KAANbW6Y/download/TotalResult.csv",
@@ -262,7 +267,9 @@ MAILBOX_RESPONSE = {
             "category": "CUSTOM",
             "api_key": None,
             "default_driver_fee_percentage": None,
-            "parser_field_set": ["PF1391"],
+            "parser_field_set": [
+                {"id": "PF1391", "is_required": False, "used_by_ai": True}
+            ],
         },
         {
             "id": 46,
@@ -273,7 +280,9 @@ MAILBOX_RESPONSE = {
             "category": "CUSTOM",
             "api_key": None,
             "default_driver_fee_percentage": None,
-            "parser_field_set": ["PF1391"],
+            "parser_field_set": [
+                {"id": "PF1391", "is_required": False, "used_by_ai": True}
+            ],
         },
     ],
     "table_set": [{"id": "PF951", "name": "Sheet"}],
@@ -459,7 +468,9 @@ MAILBOX_LIST_RESPONSE = {
                     "category": "CUSTOM",
                     "api_key": None,
                     "default_driver_fee_percentage": None,
-                    "parser_field_set": ["PF1391"],
+                    "parser_field_set": [
+                        {"id": "PF1391", "is_required": False, "used_by_ai": True}
+                    ],
                 },
                 {
                     "id": 46,
@@ -470,7 +481,9 @@ MAILBOX_LIST_RESPONSE = {
                     "category": "CUSTOM",
                     "api_key": None,
                     "default_driver_fee_percentage": None,
-                    "parser_field_set": ["PF1391"],
+                    "parser_field_set": [
+                        {"id": "PF1391", "is_required": False, "used_by_ai": True}
+                    ],
                 },
                 {
                     "id": 34,
@@ -669,7 +682,9 @@ MAILBOX_LIST_RESPONSE = {
                     "category": "CUSTOM",
                     "api_key": None,
                     "default_driver_fee_percentage": None,
-                    "parser_field_set": ["PF1391"],
+                    "parser_field_set": [
+                        {"id": "PF1391", "is_required": False, "used_by_ai": True}
+                    ],
                 },
                 {
                     "id": 46,
@@ -680,7 +695,9 @@ MAILBOX_LIST_RESPONSE = {
                     "category": "CUSTOM",
                     "api_key": None,
                     "default_driver_fee_percentage": None,
-                    "parser_field_set": ["PF1391"],
+                    "parser_field_set": [
+                        {"id": "PF1391", "is_required": False, "used_by_ai": True}
+                    ],
                 },
                 {
                     "id": 34,
@@ -876,7 +893,9 @@ MAILBOX_LIST_RESPONSE = {
                     "category": "CUSTOM",
                     "api_key": None,
                     "default_driver_fee_percentage": None,
-                    "parser_field_set": ["PF1391"],
+                    "parser_field_set": [
+                        {"id": "PF1391", "is_required": False, "used_by_ai": True}
+                    ],
                 },
                 {
                     "id": 46,
@@ -887,7 +906,9 @@ MAILBOX_LIST_RESPONSE = {
                     "category": "CUSTOM",
                     "api_key": None,
                     "default_driver_fee_percentage": None,
-                    "parser_field_set": ["PF1391"],
+                    "parser_field_set": [
+                        {"id": "PF1391", "is_required": False, "used_by_ai": True}
+                    ],
                 },
                 {
                     "id": 34,

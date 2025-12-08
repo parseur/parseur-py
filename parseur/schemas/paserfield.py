@@ -8,8 +8,8 @@ class ParserFieldSchema(BaseSchema):
     name = fields.String(required=True)
     format = fields.String(required=True)
     type = fields.String(required=True)
-
-    is_optional = fields.Boolean(allow_none=True)
+    is_required = fields.Boolean(required=True)
+    used_by_ai = fields.Boolean(required=True)
     query = fields.String(allow_none=True)
 
     csv_download = fields.String(required=True)

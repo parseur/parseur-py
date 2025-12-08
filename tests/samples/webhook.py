@@ -64,7 +64,7 @@ WEBHOOK_LIST_RESPONSE = [
         "category": "CUSTOM",
         "api_key": None,
         "default_driver_fee_percentage": None,
-        "parser_field_set": ["PF1391"],
+        "parser_field_set": [{'id':"PF1391", 'is_required': False, 'used_by_ai': True}],
     },
     {
         "id": 46,
@@ -75,7 +75,7 @@ WEBHOOK_LIST_RESPONSE = [
         "category": "CUSTOM",
         "api_key": None,
         "default_driver_fee_percentage": None,
-        "parser_field_set": ["PF1391"],
+        "parser_field_set": [{'id':"PF1391", 'is_required': False, 'used_by_ai': True}],
     },
     {
         "id": 34,
