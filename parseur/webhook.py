@@ -64,7 +64,7 @@ class Webhook:
         return cls.from_response(raw)
 
     @classmethod
-    def retrieve(cls, webhook_id: int) -> bool:
+    def retrieve(cls, webhook_id: int) -> Dict[str, Any]:
         """
         Retrieve a webhook from the account.
 

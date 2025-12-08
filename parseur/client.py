@@ -21,11 +21,9 @@ class Client:
     def request(cls, method: str, endpoint: str, **kwargs) -> Any:
         url = urljoin(parseur.api_base, endpoint)
         logging.debug(f"Request: {method} {url}")
-        headers = cls.auth_headers(json="json" in kwargs)
+        headers = cls.auth_headers(json= "json" in kwargs)
         response = requests.request(method, url, headers=headers, **kwargs)
         response.raise_for_status()
-        if method == "DELETE":
-            return None
         return response.json()
 
     @classmethod
