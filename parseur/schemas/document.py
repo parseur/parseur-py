@@ -29,7 +29,7 @@ class DocumentStatus(str, Enum):
 
 class DocumentSchema(BaseSchema):
     id = fields.Int(required=True)
-    name = fields.String(required=True)
+    name = fields.String(allow_none=True)
 
     status = fields.String(
         required=True,
