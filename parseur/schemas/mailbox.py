@@ -46,6 +46,8 @@ class MailboxSchema(BaseSchema):
             error="Must be 'MONTH_FIRST', 'DAY_FIRST', or null.",
         ),
     )
+    # Disable auto-detection of input_date_format
+    input_date_format_autodetection = fields.Boolean()
     # Parseur will automatically delete documents once they get older than the selected threshold.
     retention_policy = fields.Int(allow_none=True)
 
