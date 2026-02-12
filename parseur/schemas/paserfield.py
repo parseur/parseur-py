@@ -11,6 +11,7 @@ class ParserFieldSchema(BaseSchema):
     is_required = fields.Boolean(required=True)
     used_by_ai = fields.Boolean(required=True)
     query = fields.String(allow_none=True)
+    choice_set = fields.List(fields.String(), allow_none=True)
 
     csv_download = fields.String(required=True)
     json_download = fields.String(required=True)
