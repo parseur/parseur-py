@@ -30,7 +30,7 @@ class MailboxSchema(BaseSchema):
     # ################
     decimal_separator = fields.String(
         allow_none=True,
-        validate=validate.OneOf([".", ","], error="Must be '.' or ',' or null."),
+        validate=validate.OneOf([".", ",", ""], error="Must be '.', ',' or null."),
     )
     default_timezone = fields.String(allow_none=True)
 
