@@ -9,7 +9,7 @@
 project = "parseur-py"
 copyright = "2025, Parseur Team"
 author = "Parseur Team"
-release = "1.5.2"
+release = "1.5.3"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
