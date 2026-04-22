@@ -1,7 +1,7 @@
 # Sphinx itself
 sphinx>=7.0
 # To use Markdown in docs
-myst-parser>=2.0
+myst-parser>=4.0.1
 # For type hints in docstrings (sphinx.ext.autodoc.typing)
 sphinx-autodoc-typehints>=1.25
 # Better theme for ReadTheDocs
