@@ -6,6 +6,25 @@ import parseur
 
 ABSOLUTE_URL_FIELDS = {"csv_download", "json_download", "xls_download"}
 
+DOWNLOAD_URL_FIELDS = {
+    "csv": "csv_download",
+    "json": "json_download",
+    "xls": "xls_download",
+    "xlsx": "xls_download",
+}
+
+
+def download_url_field(fmt):
+    """Return the response key holding the download URL for an export format.
+
+    :param fmt: ``"csv"``, ``"json"`` or ``"xlsx"`` (``"xls"`` is accepted).
+    :raises ValueError: If the format is not supported.
+    """
+    try:
+        return DOWNLOAD_URL_FIELDS[fmt]
+    except KeyError:
+        raise ValueError(f"Unsupported format {fmt!r}; use 'csv', 'json' or 'xlsx'.")
+
 
 def resolve_absolute_urls(obj):
     if isinstance(obj, dict):

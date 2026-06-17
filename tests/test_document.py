@@ -2,6 +2,8 @@ from datetime import datetime
 import tempfile
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 import parseur
 
 
@@ -136,7 +138,7 @@ def test_retrieve_document(mock_request, document_data):
 
     doc = parseur.Document.retrieve(2885)
 
-    mock_request.assert_called_once_with("GET", "/document/2885")
+    mock_request.assert_called_once_with("GET", "/document/2885", api_key=None)
 
     assert doc.id == doc["id"] == 2885
     assert doc.name == doc["name"] == "scan_philippe.lipack_2025-07-23-11-46-09.pdf"
@@ -171,38 +173,60 @@ def test_skip_document(mock_request, document_data):
 
     doc = parseur.Document.skip(2885)
 
-    mock_request.assert_called_once_with("POST", "/document/2885/skip")
+    mock_request.assert_called_once_with("POST", "/document/2885/skip", api_key=None)
     assert doc.id == doc["id"] == 2885
     assert doc.name == doc["name"] == "scan_philippe.lipack_2025-07-23-11-46-09.pdf"
 
 
 @patch("parseur.client.Client.request")
-def test_reprocess_document(mock_request, document_data):
-    mock_request.return_value = document_data
+def test_reprocess_document(mock_request, document_notification_data):
+    mock_request.return_value = document_notification_data
 
-    doc = parseur.Document.reprocess(2885)
+    notifications = parseur.Document.reprocess(2885)
 
-    mock_request.assert_called_once_with("POST", "/document/2885/process")
-    assert doc.id == doc["id"] == 2885
-    assert doc.status == doc["status"] == "PARSEDOK"
+    mock_request.assert_called_once_with("POST", "/document/2885/process", api_key=None)
+    assert notifications["info"] == ["Document is being processed. Please wait."]
 
 
 @patch("parseur.client.Client.request")
-def test_copy_document(mock_request, document_data):
-    mock_request.return_value = document_data
+def test_copy_document(mock_request, document_notification_data):
+    mock_request.return_value = document_notification_data
 
-    doc = parseur.Document.copy(2885, 120)
+    notifications = parseur.Document.copy(2885, 120)
 
-    mock_request.assert_called_once_with("POST", "/document/2885/copy/120")
-    assert doc.id == doc["id"] == 2885
-    assert doc.parser == doc["parser"] == 120
+    mock_request.assert_called_once_with(
+        "POST", "/document/2885/copy/120", api_key=None
+    )
+    assert notifications["info"] == ["Document is being processed. Please wait."]
+
+
+@patch("parseur.client.Client.request")
+def test_split_document(mock_request, document_notification_data):
+    mock_request.return_value = document_notification_data
+
+    notifications = parseur.Document.split(2885)
+
+    mock_request.assert_called_once_with("POST", "/document/2885/split", api_key=None)
+    assert notifications["info"] == ["Document is being processed. Please wait."]
+
+
+@patch("parseur.client.Client.request")
+def test_reverse_split_document(mock_request, document_notification_data):
+    mock_request.return_value = document_notification_data
+
+    notifications = parseur.Document.reverse_split(2885)
+
+    mock_request.assert_called_once_with(
+        "POST", "/document/2885/reverse_split", api_key=None
+    )
+    assert notifications["info"] == ["Document is being processed. Please wait."]
 
 
 @patch("parseur.client.Client.request")
 def test_delete_document(mock_request):
     parseur.Document.delete(2885)
 
-    mock_request.assert_called_once_with("DELETE", "/document/2885")
+    mock_request.assert_called_once_with("DELETE", "/document/2885", api_key=None)
 
 
 @patch("parseur.client.Client.request")
@@ -248,7 +272,8 @@ def test_upload_file_returns_document(mock_request, document_upload_file_data):
 
         assert method == "POST"
         assert url == "/parser/120/upload"
-        assert files["file"].name == fd.name
+        # files["file"] is (filename, fileobj)
+        assert files["file"][1].name == fd.name
 
         assert result["message"] == result.message == "OK"
         assert (
@@ -299,3 +324,77 @@ def test_document_logs_returns_logs(mock_request, document_log_data):
     assert log2.message == log2["message"] == "Received"
     assert log2.initiator == log2["initiator"] == "support@parseur.com"
     assert log2.initiator_name == log2["initiator_name"] == "Parseur"
+
+
+@patch("parseur.document.time.sleep", lambda *a, **k: None)
+@patch("parseur.client.Client.request")
+def test_wait_returns_when_final(mock_request, document_data):
+    analyzing = {**document_data, "status": "ANALYZING"}
+    done = {**document_data, "status": "PARSEDOK"}
+    mock_request.side_effect = [analyzing, done]
+
+    calls = []
+    doc = parseur.Document.wait("abc123", on_poll=lambda e, s: calls.append(s))
+
+    assert doc["status"] == "PARSEDOK"
+    assert mock_request.call_count == 2
+    # on_poll is invoked once per status check.
+    assert calls == ["ANALYZING", "PARSEDOK"]
+
+
+@patch("parseur.document.time.sleep", lambda *a, **k: None)
+@patch("parseur.document.MAX_WAIT", 0)
+@patch("parseur.client.Client.request")
+def test_wait_times_out_while_pending(mock_request, document_data):
+    mock_request.return_value = {**document_data, "status": "ANALYZING"}
+
+    with pytest.raises(TimeoutError):
+        parseur.Document.wait("abc123")
+
+
+@patch("parseur.document.time.sleep", lambda *a, **k: None)
+@patch("parseur.client.Client.request")
+def test_upload_file_and_wait(mock_request, document_upload_file_data, document_data):
+    done = {**document_data, "status": "PARSEDOK"}
+    # 1st call: the upload; 2nd call: the status poll.
+    mock_request.side_effect = [document_upload_file_data, done]
+
+    with tempfile.NamedTemporaryFile() as fd:
+        doc = parseur.Document.upload_file_and_wait(120, fd.name)
+
+    assert doc["status"] == "PARSEDOK"
+    assert mock_request.call_args_list[0].args[0] == "POST"
+    assert mock_request.call_args_list[1].args[0] == "GET"
+
+
+@patch("parseur.document.time.sleep", lambda *a, **k: None)
+@patch("parseur.client.Client.request")
+def test_upload_text_and_wait(mock_request, document_upload_text_data, document_data):
+    done = {**document_data, "status": "PARSEDOK"}
+    mock_request.side_effect = [document_upload_text_data, done]
+
+    doc = parseur.Document.upload_text_and_wait(
+        "inbox@robot.parseur.com", "Subject", body_plain="hi"
+    )
+
+    assert doc["status"] == "PARSEDOK"
+    assert mock_request.call_count == 2
+
+
+@patch("parseur.client.Client.request")
+def test_upload_file_sends_filename(mock_request, document_upload_file_data, tmp_path):
+    mock_request.return_value = document_upload_file_data
+    f = tmp_path / "invoice.pdf"
+    f.write_bytes(b"%PDF-1.4 ...")
+
+    parseur.Document.upload_file(120, str(f))
+
+    args, kwargs = mock_request.call_args
+    assert args == ("POST", "/parser/120/upload")
+    # the upload carries the file's name.
+    assert kwargs["files"]["file"][0] == "invoice.pdf"
+
+
+def test_upload_file_missing_path_raises():
+    with pytest.raises(FileNotFoundError):
+        parseur.Document.upload_file(120, "/no/such/file-xyz.pdf")

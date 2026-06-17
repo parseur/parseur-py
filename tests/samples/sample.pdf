@@ -1,0 +1,179 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 5806 >>
+stream
+0 0 0 RG
+0.130 0.390 0.670 rg
+40.0 712.0 36.0 36.0 re f
+0 0 0 rg
+1.000 1.000 1.000 rg
+BT /F2 18 Tf 46.0 724.0 Td (NS) Tj ET
+0 0 0 rg
+BT /F2 15 Tf 86.0 732.0 Td (Northwind Supplies Ltd.) Tj ET
+BT /F1 8 Tf 86.0 720.0 Td (18 Harbour Road, Unit 4) Tj ET
+BT /F1 8 Tf 86.0 710.0 Td (Bristol BS1 5TY, United Kingdom) Tj ET
+BT /F1 8 Tf 86.0 700.0 Td (VAT GB 218 4471 09) Tj ET
+0.130 0.390 0.670 rg
+BT /F2 22 Tf 492.0 736.0 Td (INVOICE) Tj ET
+0 0 0 rg
+BT /F2 8 Tf 392.0 712.0 Td (Invoice No:) Tj ET
+BT /F1 8 Tf 520.0 712.0 Td (INV-2026-0042) Tj ET
+BT /F2 8 Tf 392.0 700.0 Td (PO Number:) Tj ET
+BT /F1 8 Tf 540.0 700.0 Td (PO-99817) Tj ET
+BT /F2 8 Tf 392.0 688.0 Td (Invoice Date:) Tj ET
+BT /F1 8 Tf 532.0 688.0 Td (2026-06-16) Tj ET
+BT /F2 8 Tf 392.0 676.0 Td (Due Date:) Tj ET
+BT /F1 8 Tf 532.0 676.0 Td (2026-07-16) Tj ET
+BT /F2 8 Tf 392.0 664.0 Td (Issue Time:) Tj ET
+BT /F1 8 Tf 552.0 664.0 Td (09:45) Tj ET
+BT /F2 8 Tf 392.0 652.0 Td (Generated At:) Tj ET
+BT /F1 8 Tf 508.0 652.0 Td (2026-06-16 09:45) Tj ET
+0.130 0.390 0.670 rg
+BT /F2 9 Tf 40.0 648.0 Td (BILL TO) Tj ET
+0 0 0 rg
+BT /F1 9 Tf 40.0 634.0 Td (Contoso Ltd, 742 Evergreen Terrace, Springfield, IL 62704, USA) Tj ET
+BT /F1 9 Tf 40.0 620.0 Td (Account Manager: Jane Doe) Tj ET
+BT /F1 9 Tf 40.0 606.0 Td (Payment Terms: Net 30) Tj ET
+BT /F1 8 Tf 40.0 592.0 Td (Customer Portal: https://billing.northwind.example.com/inv/INV-2026-0042) Tj ET
+0.910 0.940 0.980 rg
+40.0 550.0 532.0 16.0 re f
+0 0 0 rg
+BT /F2 9 Tf 44.0 554.0 Td (SKU) Tj ET
+BT /F2 9 Tf 114.0 554.0 Td (Description) Tj ET
+BT /F2 9 Tf 332.5 554.0 Td (Qty) Tj ET
+BT /F2 9 Tf 381.0 554.0 Td (Unit Price) Tj ET
+BT /F2 9 Tf 472.5 554.0 Td (Tax) Tj ET
+BT /F2 9 Tf 541.0 554.0 Td (Amount) Tj ET
+BT /F1 8 Tf 44.0 538.0 Td (WDG-1001) Tj ET
+BT /F1 8 Tf 114.0 538.0 Td (Standard Widget) Tj ET
+BT /F1 8 Tf 338.0 538.0 Td (10) Tj ET
+BT /F1 8 Tf 406.0 538.0 Td (12.50) Tj ET
+BT /F1 8 Tf 478.0 538.0 Td (8%) Tj ET
+BT /F1 8 Tf 544.0 538.0 Td (125.00) Tj ET
+BT /F1 8 Tf 44.0 522.0 Td (WDG-1002) Tj ET
+BT /F1 8 Tf 114.0 522.0 Td (Premium Widget) Tj ET
+BT /F1 8 Tf 342.0 522.0 Td (5) Tj ET
+BT /F1 8 Tf 406.0 522.0 Td (24.00) Tj ET
+BT /F1 8 Tf 478.0 522.0 Td (8%) Tj ET
+BT /F1 8 Tf 544.0 522.0 Td (120.00) Tj ET
+BT /F1 8 Tf 44.0 506.0 Td (GDT-2001) Tj ET
+BT /F1 8 Tf 114.0 506.0 Td (Gadget Mini) Tj ET
+BT /F1 8 Tf 338.0 506.0 Td (20) Tj ET
+BT /F1 8 Tf 410.0 506.0 Td (6.75) Tj ET
+BT /F1 8 Tf 478.0 506.0 Td (8%) Tj ET
+BT /F1 8 Tf 544.0 506.0 Td (135.00) Tj ET
+BT /F1 8 Tf 44.0 490.0 Td (GDT-2002) Tj ET
+BT /F1 8 Tf 114.0 490.0 Td (Gadget Pro) Tj ET
+BT /F1 8 Tf 342.0 490.0 Td (3) Tj ET
+BT /F1 8 Tf 406.0 490.0 Td (49.90) Tj ET
+BT /F1 8 Tf 478.0 490.0 Td (8%) Tj ET
+BT /F1 8 Tf 544.0 490.0 Td (149.70) Tj ET
+BT /F1 8 Tf 44.0 474.0 Td (CBL-3001) Tj ET
+BT /F1 8 Tf 114.0 474.0 Td (USB-C Cable 2m) Tj ET
+BT /F1 8 Tf 338.0 474.0 Td (15) Tj ET
+BT /F1 8 Tf 410.0 474.0 Td (4.20) Tj ET
+BT /F1 8 Tf 478.0 474.0 Td (8%) Tj ET
+BT /F1 8 Tf 548.0 474.0 Td (63.00) Tj ET
+BT /F1 8 Tf 44.0 458.0 Td (CBL-3002) Tj ET
+BT /F1 8 Tf 114.0 458.0 Td (HDMI Cable 3m) Tj ET
+BT /F1 8 Tf 342.0 458.0 Td (8) Tj ET
+BT /F1 8 Tf 410.0 458.0 Td (7.80) Tj ET
+BT /F1 8 Tf 478.0 458.0 Td (8%) Tj ET
+BT /F1 8 Tf 548.0 458.0 Td (62.40) Tj ET
+BT /F1 8 Tf 44.0 442.0 Td (ADP-4001) Tj ET
+BT /F1 8 Tf 114.0 442.0 Td (Power Adapter 65W) Tj ET
+BT /F1 8 Tf 342.0 442.0 Td (6) Tj ET
+BT /F1 8 Tf 406.0 442.0 Td (29.99) Tj ET
+BT /F1 8 Tf 478.0 442.0 Td (8%) Tj ET
+BT /F1 8 Tf 544.0 442.0 Td (179.94) Tj ET
+BT /F1 8 Tf 44.0 426.0 Td (ADP-4002) Tj ET
+BT /F1 8 Tf 114.0 426.0 Td (Travel Adapter) Tj ET
+BT /F1 8 Tf 338.0 426.0 Td (12) Tj ET
+BT /F1 8 Tf 410.0 426.0 Td (9.50) Tj ET
+BT /F1 8 Tf 478.0 426.0 Td (8%) Tj ET
+BT /F1 8 Tf 544.0 426.0 Td (114.00) Tj ET
+BT /F1 8 Tf 44.0 410.0 Td (BAT-5001) Tj ET
+BT /F1 8 Tf 114.0 410.0 Td (AA Battery Pack) Tj ET
+BT /F1 8 Tf 338.0 410.0 Td (30) Tj ET
+BT /F1 8 Tf 410.0 410.0 Td (3.10) Tj ET
+BT /F1 8 Tf 478.0 410.0 Td (8%) Tj ET
+BT /F1 8 Tf 548.0 410.0 Td (93.00) Tj ET
+BT /F1 8 Tf 44.0 394.0 Td (BAT-5002) Tj ET
+BT /F1 8 Tf 114.0 394.0 Td (Li-ion Battery) Tj ET
+BT /F1 8 Tf 342.0 394.0 Td (4) Tj ET
+BT /F1 8 Tf 406.0 394.0 Td (18.40) Tj ET
+BT /F1 8 Tf 478.0 394.0 Td (8%) Tj ET
+BT /F1 8 Tf 548.0 394.0 Td (73.60) Tj ET
+BT /F1 8 Tf 44.0 378.0 Td (CSE-6001) Tj ET
+BT /F1 8 Tf 114.0 378.0 Td (Carrying Case) Tj ET
+BT /F1 8 Tf 342.0 378.0 Td (7) Tj ET
+BT /F1 8 Tf 406.0 378.0 Td (15.25) Tj ET
+BT /F1 8 Tf 478.0 378.0 Td (8%) Tj ET
+BT /F1 8 Tf 544.0 378.0 Td (106.75) Tj ET
+BT /F1 8 Tf 44.0 362.0 Td (CSE-6002) Tj ET
+BT /F1 8 Tf 114.0 362.0 Td (Protective Sleeve) Tj ET
+BT /F1 8 Tf 342.0 362.0 Td (9) Tj ET
+BT /F1 8 Tf 410.0 362.0 Td (5.60) Tj ET
+BT /F1 8 Tf 478.0 362.0 Td (8%) Tj ET
+BT /F1 8 Tf 548.0 362.0 Td (50.40) Tj ET
+0.5 w 40.0 566.0 m 572.0 566.0 l S
+0.5 w 40.0 550.0 m 572.0 550.0 l S
+0.5 w 40.0 534.0 m 572.0 534.0 l S
+0.5 w 40.0 518.0 m 572.0 518.0 l S
+0.5 w 40.0 502.0 m 572.0 502.0 l S
+0.5 w 40.0 486.0 m 572.0 486.0 l S
+0.5 w 40.0 470.0 m 572.0 470.0 l S
+0.5 w 40.0 454.0 m 572.0 454.0 l S
+0.5 w 40.0 438.0 m 572.0 438.0 l S
+0.5 w 40.0 422.0 m 572.0 422.0 l S
+0.5 w 40.0 406.0 m 572.0 406.0 l S
+0.5 w 40.0 390.0 m 572.0 390.0 l S
+0.5 w 40.0 374.0 m 572.0 374.0 l S
+0.5 w 40.0 358.0 m 572.0 358.0 l S
+0.5 w 40.0 566.0 m 40.0 358.0 l S
+0.5 w 110.0 566.0 m 110.0 358.0 l S
+0.5 w 300.0 566.0 m 300.0 358.0 l S
+0.5 w 350.0 566.0 m 350.0 358.0 l S
+0.5 w 430.0 566.0 m 430.0 358.0 l S
+0.5 w 490.0 566.0 m 490.0 358.0 l S
+0.5 w 572.0 566.0 m 572.0 358.0 l S
+BT /F1 9 Tf 430.0 340.0 Td (Subtotal:) Tj ET
+BT /F1 9 Tf 540.5 340.0 Td (1272.79) Tj ET
+BT /F1 9 Tf 430.0 326.0 Td (Tax \(8%\):) Tj ET
+BT /F1 9 Tf 545.0 326.0 Td (101.82) Tj ET
+BT /F2 9 Tf 430.0 312.0 Td (Total Due:) Tj ET
+BT /F2 9 Tf 540.5 312.0 Td (1374.61) Tj ET
+0.130 0.390 0.670 rg
+BT /F1 9 Tf 40.0 60.0 Td (Thank you for your business.) Tj ET
+0 0 0 rg
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000006109 00000 n 
+0000006179 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+6254
+%%EOF

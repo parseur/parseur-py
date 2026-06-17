@@ -21,9 +21,16 @@ dependencies = [
 listener = [
     "Flask>=3.1.0",
 ]
+mcp = [
+    "mcp>=1.2.0",
+]
 
 [project.scripts]
 parseur = "parseur.cli:cli"
+parseur-mcp = "parseur.mcp_server:main"
+# Alias matching the PyPI package name so the MCP registry / uvx can launch the
+# server with `uvx --from "parseur-py[mcp]" parseur-py` (see server.json).
+parseur-py = "parseur.mcp_server:main"
 
 [project.urls]
 Homepage = "https://github.com/parseur/parseur-py"

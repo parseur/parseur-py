@@ -1,0 +1,36 @@
+[LOGO] Northwind Supplies Ltd.
+18 Harbour Road, Unit 4
+Bristol BS1 5TY, United Kingdom
+VAT GB 218 4471 09
+
+INVOICE
+Invoice Number: INV-2026-0042
+PO Number: PO-99817
+Invoice Date: 2026-06-16
+Due Date: 2026-07-16
+Issue Time: 09:45
+Generated At: 2026-06-16 09:45
+Account Manager: Jane Doe
+Payment Terms: Net 30
+
+Bill To: Contoso Ltd, 742 Evergreen Terrace, Springfield, IL 62704, USA
+Customer Portal: https://billing.northwind.example.com/inv/INV-2026-0042
+
+Line Items:
+SKU        Description               Qty   Unit Price    Tax       Amount
+WDG-1001   Standard Widget            10        12.50     8%       125.00
+WDG-1002   Premium Widget              5        24.00     8%       120.00
+GDT-2001   Gadget Mini                20         6.75     8%       135.00
+GDT-2002   Gadget Pro                  3        49.90     8%       149.70
+CBL-3001   USB-C Cable 2m             15         4.20     8%        63.00
+CBL-3002   HDMI Cable 3m               8         7.80     8%        62.40
+ADP-4001   Power Adapter 65W           6        29.99     8%       179.94
+ADP-4002   Travel Adapter             12         9.50     8%       114.00
+BAT-5001   AA Battery Pack            30         3.10     8%        93.00
+BAT-5002   Li-ion Battery              4        18.40     8%        73.60
+CSE-6001   Carrying Case               7        15.25     8%       106.75
+CSE-6002   Protective Sleeve           9         5.60     8%        50.40
+
+Subtotal: 1272.79
+Tax (8%): 101.82
+Total Due: 1374.61

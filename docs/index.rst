@@ -38,12 +38,14 @@ A modern, easy-to-use library and command-line tool to interact with the Parseur
 Features
 --------
 
-- 📬 Manage **Mailboxes** and their schema
-- 📄 List, get, copy, reprocess, skip, and delete **Documents**
+- 📬 Manage **Mailboxes** (create, update, delete) and their schema
+- 🧩 Manage a mailbox's **Parser Fields** (list, add, update)
+- 📄 List, get, copy, reprocess, skip, split, reverse-split, and delete **Documents**
 - 📈 Retrieve **Document logs**
 - 📤 **Upload** files and email content
 - 🌐 Manage **Webhooks** (create, delete, get, list, enable, pause)
 - 🛠️ Full-featured **CLI** included
+- 🤖 Built-in **MCP server** to drive Parseur from AI assistants
 
 
 Contents

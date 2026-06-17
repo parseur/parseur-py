@@ -667,6 +667,21 @@ DOCUMENT_RESPONSE = {
     "processed": "2025-07-31T03:11:15.107217Z",
     "received": "2025-07-31T03:09:13.398385Z",
     "sample_set": [],
+    "content": None,
+    "next_id": None,
+    "prev_id": None,
+    "ocr_page_set": [
+        {
+            "image": {
+                "url": "https://api.parseur.com/document/NUXbecvwY3Xc3J_IMatZsCP1x4x2lwstowfPfhpUayD94ebAcye3qMCqXG0kkq2U/image/1.jpg",
+                "width": 1652,
+                "height": 2338,
+                "content_type": "image/jpeg",
+            },
+            "position": 1,
+            "included_in_range": True,
+        }
+    ],
     "status_source": "AI",
     "status": "PARSEDOK",
     "template": None,
@@ -736,4 +751,9 @@ DOCUMENT_UPLOAD_FILE_RESPONSE = {
 DOCUMENT_UPLOAD_TEXT_RESPONSE = {
     "DocumentID": "753ec679789a4b1ebea629f630db6f29",
     "message": "OK",
+}
+
+# Returned by async document actions (reprocess, copy, split, reverse_split).
+DOCUMENT_NOTIFICATION_RESPONSE = {
+    "notification_set": {"info": ["Document is being processed. Please wait."]}
 }

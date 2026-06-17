@@ -129,3 +129,19 @@ class DocumentUploadSchema(BaseSchema):
     DocumentID = fields.String(allow_none=True)
     attachments = fields.List(fields.Nested(AttachmentSchema), allow_none=True)
     message = fields.String(required=True)
+
+
+class NotificationSetSchema(BaseSchema):
+    """User notifications returned by asynchronous document actions.
+
+    Endpoints that kick off background work (reprocess, copy, split,
+    reverse_split, ...) do not return the document; they reply with
+    ``{"notification_set": {<level>: [messages]}}`` where ``<level>`` is one of
+    ``info`` / ``success`` / ``warning`` / ``error``. Only the levels present in
+    the response are populated.
+    """
+
+    info = fields.List(fields.String())
+    success = fields.List(fields.String())
+    warning = fields.List(fields.String())
+    error = fields.List(fields.String())

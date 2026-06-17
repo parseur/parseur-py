@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "parseur": {
+      "command": "parseur-mcp",
+      "env": {
+        "PARSEUR_API_KEY": "sk_your_api_key_here",
+        "PARSEUR_API_BASE": "https://api.parseur.com"
+      }
+    }
+  }
+}
