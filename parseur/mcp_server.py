@@ -11,7 +11,7 @@ about what each command does and what it returns.
 
 Requires the ``mcp`` extra::
 
-    pip install parseur-py[mcp]
+    pip install "parseur-py[mcp]"
 
 Run it with::
 
@@ -32,7 +32,7 @@ try:
 except ImportError as e:  # pragma: no cover - exercised only without the extra
     raise ImportError(
         "The MCP server requires the 'mcp' package. "
-        "Please install with: pip install parseur-py[mcp]"
+        'Please install with: pip install "parseur-py[mcp]"'
     ) from e
 
 from pydantic import Field

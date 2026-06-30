@@ -55,13 +55,13 @@ pip install parseur-py
 With event listener support (Flask + localtunnel)
 
 ```bash
-pip install parseur-py[listener]
+pip install "parseur-py[listener]"
 ```
 
 With MCP server support (use Parseur from AI assistants)
 
 ```bash
-pip install parseur-py[mcp]
+pip install "parseur-py[mcp]"
 ```
 
 ### Install the package from source
@@ -248,29 +248,53 @@ Your webhook endpoint will receive POST notifications with Parseur payloads, ena
 
 ### Install
 
+The MCP server is an **optional** feature, behind the `mcp` extra (it pulls in
+the `mcp` SDK and `pydantic`; the base `parseur-py` install does not):
+
 ```bash
-pip install parseur-py[mcp]
+pip install "parseur-py[mcp]"
 ```
+
+> Zero-install: if you have [`uv`](https://docs.astral.sh/uv/), you don't need to
+> install anything — `uvx --from "parseur-py[mcp]" parseur-py` runs the server in
+> a throwaway environment. This is the recommended way to wire it into an MCP
+> client (see below).
 
 ### Run
 
-The server speaks MCP over **stdio**. It reads your API key from `~/.parseur.conf` (run `parseur init` first) or from the `PARSEUR_API_KEY` environment variable.
+The server speaks MCP over **stdio**. It reads your API key from
+`~/.parseur.conf` (run `parseur init` first) or from the `PARSEUR_API_KEY`
+environment variable (which takes precedence — MCP clients usually inject it).
 
 ```bash
-parseur mcp
-```
-
-You can also launch it via the dedicated console script or as a module:
-
-```bash
-parseur-mcp
-python -m parseur.mcp_server
+parseur mcp                     # via the main CLI (needs the [mcp] extra)
+parseur-mcp                     # dedicated console script
+python -m parseur.mcp_server    # as a module
+uvx --from "parseur-py[mcp]" parseur-py   # zero-install with uv
 ```
 
 ### Configure your client
 
 Add Parseur to your MCP client config. Example for **Claude Desktop**
-(`claude_desktop_config.json`):
+(`claude_desktop_config.json`).
+
+Zero-install with `uv` (recommended — nothing to install or keep updated):
+
+```json
+{
+  "mcpServers": {
+    "parseur": {
+      "command": "uvx",
+      "args": ["--from", "parseur-py[mcp]", "parseur-py"],
+      "env": {
+        "PARSEUR_API_KEY": "YOUR_PARSEUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+Or, if you installed `parseur-py[mcp]` yourself, point at the console script:
 
 ```json
 {

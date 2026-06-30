@@ -710,7 +710,7 @@ Install the extra:
 
 .. code-block:: bash
 
-   pip install parseur-py[mcp]
+   pip install "parseur-py[mcp]"
 
 Run the server:
 

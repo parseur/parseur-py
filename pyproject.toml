@@ -22,7 +22,10 @@ listener = [
     "Flask>=3.1.0",
 ]
 mcp = [
-    "mcp>=1.2.0",
+    # FastMCP tool `title` + `structured_output` (used by the server) require a
+    # recent SDK; pydantic is imported directly (mcp ships it, declared here too).
+    "mcp>=1.18.0",
+    "pydantic>=2.0",
 ]
 
 [project.scripts]

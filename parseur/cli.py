@@ -674,7 +674,7 @@ def mcp():
     assistants (Claude Desktop, Cursor, ...) can manage your mailboxes,
     documents, and webhooks.
 
-    Install with: pip install parseur-py[mcp]
+    Install with: pip install "parseur-py[mcp]"
     """
     try:
         from . import mcp_server
