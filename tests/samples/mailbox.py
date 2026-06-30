@@ -1,6 +1,16 @@
 MAILBOX_RESPONSE = {
     "account_uuid": "acc_362f4ad34c3843fdb2b9b5f78b3a0203",
-    "ai_engine": "GCP_AI_1",
+    "ai_engine": "GCP_AI_2",
+    "ai_instructions": None,
+    "ai_split_instructions": None,
+    "is_ai_split_enabled": False,
+    "master_parser_slug": None,
+    "secret": "MkbccwBtDXxF7ATiKEizu0fyAk1hIU90igyGP6KdQBKu8VpRK.sN.e.8l0iABEwD",
+    "default_language": "en",
+    "input_date_format_autodetection": True,
+    "created_field": False,
+    "created_date_field": False,
+    "created_time_field": False,
     "attachments_only": False,
     "attachments_only_override": False,
     "allowed_extensions": [
@@ -179,7 +189,6 @@ MAILBOX_RESPONSE = {
     "template_set_last_modified": None,
     "webhook_set": [],
     "xls_download": "/parser/q3wFHXoJNa6vf5Brp9KxSy1PQT82tqc8jxRW7bG.27.Bqcwl6WBfe-5isC7Cj_ze/download/mailbox.m70tq.xlsx",
-    "zip_attachments": False,
     "available_webhook_set": [
         {
             "id": 33,

@@ -28,6 +28,8 @@ class Webhook:
         table_field_id: Optional[str] = None,
         headers: Optional[Dict[str, str]] = None,
         name: Optional[str] = None,
+        *,
+        api_key: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Create a new custom webhook for Parseur.
@@ -38,6 +40,7 @@ class Webhook:
         :param table_field_id: Table field ID (required for table events, e.g. "PF12345").
         :param headers: Optional custom HTTP headers.
         :param name: Optional custom name for the webhook.
+        :param api_key: Optional API key overriding the global one for this call.
         :return: The created webhook object as a dictionary.
         """
         body = {
@@ -60,63 +63,77 @@ class Webhook:
                 raise ValueError("mailbox_id is required for document events")
             body["parser"] = mailbox_id
 
-        raw = Client.request("POST", "/webhook", json=body)
+        raw = Client.request("POST", "/webhook", json=body, api_key=api_key)
         return cls.from_response(raw)
 
     @classmethod
-    def retrieve(cls, webhook_id: int) -> Dict[str, Any]:
+    def retrieve(
+        cls, webhook_id: int, *, api_key: Optional[str] = None
+    ) -> Dict[str, Any]:
         """
         Retrieve a webhook from the account.
 
         :param webhook_id: ID of the webhook to delete.
+        :param api_key: Optional API key overriding the global one for this call.
         :return: The updated mailbox object as a dictionary.
         """
-        raw = Client.request("GET", f"/webhook/{webhook_id}")
+        raw = Client.request("GET", f"/webhook/{webhook_id}", api_key=api_key)
         return cls.from_response(raw)
 
     @classmethod
-    def delete(cls, webhook_id: int) -> bool:
+    def delete(cls, webhook_id: int, *, api_key: Optional[str] = None) -> bool:
         """
         Delete a webhook from the account.
 
         :param webhook_id: ID of the webhook to delete.
+        :param api_key: Optional API key overriding the global one for this call.
         :return: True if deletion was successful.
         """
-        Client.request("DELETE", f"/webhook/{webhook_id}")
+        Client.request("DELETE", f"/webhook/{webhook_id}", api_key=api_key)
         logging.info(f"Deleted webhook ID: {webhook_id}")
         return True
 
     @classmethod
-    def enable(cls, mailbox_id: int, webhook_id: int) -> Dict[str, Any]:
+    def enable(
+        cls, mailbox_id: int, webhook_id: int, *, api_key: Optional[str] = None
+    ) -> Dict[str, Any]:
         """
         Enable an existing webhook for a given mailbox.
 
         :param mailbox_id: ID of the mailbox.
         :param webhook_id: ID of the webhook to enable.
+        :param api_key: Optional API key overriding the global one for this call.
         :return: The updated mailbox object as a dictionary.
         """
-        raw = Client.request("POST", f"/parser/{mailbox_id}/webhook_set/{webhook_id}")
+        raw = Client.request(
+            "POST", f"/parser/{mailbox_id}/webhook_set/{webhook_id}", api_key=api_key
+        )
         return Mailbox.from_response(raw)
 
     @classmethod
-    def pause(cls, mailbox_id: int, webhook_id: int) -> Dict[str, Any]:
+    def pause(
+        cls, mailbox_id: int, webhook_id: int, *, api_key: Optional[str] = None
+    ) -> Dict[str, Any]:
         """
         Pause (disable) an existing webhook for a given mailbox.
 
         :param mailbox_id: ID of the mailbox.
         :param webhook_id: ID of the webhook to pause.
+        :param api_key: Optional API key overriding the global one for this call.
         :return: The updated mailbox object as a dictionary.
         """
-        raw = Client.request("DELETE", f"/parser/{mailbox_id}/webhook_set/{webhook_id}")
+        raw = Client.request(
+            "DELETE", f"/parser/{mailbox_id}/webhook_set/{webhook_id}", api_key=api_key
+        )
         return Mailbox.from_response(raw)
 
     @classmethod
-    def list(cls) -> List[Dict[str, Any]]:
+    def list(cls, *, api_key: Optional[str] = None) -> List[Dict[str, Any]]:
         """Retrieve all webhooks as a list."""
-        return list(cls.iter())
+        return list(cls.iter(api_key=api_key))
 
     @classmethod
-    def iter(cls) -> Iterable[Dict[str, Any]]:
+    def iter(cls, *, api_key: Optional[str] = None) -> Iterable[Dict[str, Any]]:
         """Yield all webhooks registered on the account."""
-        for raw in Client.request("GET", "/webhook"):
+        for raw in Client.request("GET", "/webhook", api_key=api_key):
             yield cls.from_response(raw)

@@ -14,7 +14,7 @@ try:
 except ImportError as e:
     raise ImportError(
         "The 'listen' feature requires Flask. "
-        "Please install with: pip install parseur-py[listener]"
+        'Please install with: pip install "parseur-py[listener]"'
     ) from e
 import parseur
 

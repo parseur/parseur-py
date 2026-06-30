@@ -21,9 +21,19 @@ dependencies = [
 listener = [
     "Flask>=3.1.0",
 ]
+mcp = [
+    # FastMCP tool `title` + `structured_output` (used by the server) require a
+    # recent SDK; pydantic is imported directly (mcp ships it, declared here too).
+    "mcp>=1.18.0",
+    "pydantic>=2.0",
+]
 
 [project.scripts]
 parseur = "parseur.cli:cli"
+parseur-mcp = "parseur.mcp_server:main"
+# Alias matching the PyPI package name so the MCP registry / uvx can launch the
+# server with `uvx --from "parseur-py[mcp]" parseur-py` (see server.json).
+parseur-py = "parseur.mcp_server:main"
 
 [project.urls]
 Homepage = "https://github.com/parseur/parseur-py"

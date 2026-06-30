@@ -4,6 +4,7 @@ import parseur
 from samples.document import (
     DOCUMENT_LIST_RESPONSE,
     DOCUMENT_LOG_RESPONSE,
+    DOCUMENT_NOTIFICATION_RESPONSE,
     DOCUMENT_RESPONSE,
     DOCUMENT_UPLOAD_FILE_RESPONSE,
     DOCUMENT_UPLOAD_TEXT_RESPONSE,
@@ -46,6 +47,11 @@ def document_log_data():
 @pytest.fixture()
 def document_upload_text_data():
     return DOCUMENT_UPLOAD_TEXT_RESPONSE
+
+
+@pytest.fixture()
+def document_notification_data():
+    return DOCUMENT_NOTIFICATION_RESPONSE
 
 
 @pytest.fixture()

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.parseur/parseur-py",
+  "title": "Parseur",
+  "description": "Manage Parseur.com mailboxes, parser fields, documents, exports and webhooks.",
+  "version": "1.5.2",
+  "repository": {
+    "url": "https://github.com/parseur/parseur-py",
+    "source": "github"
+  },
+  "websiteUrl": "https://parseur.com",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "parseur-py",
+      "version": "1.5.2",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "runtimeArguments": [
+        {
+          "type": "named",
+          "name": "--from",
+          "value": "parseur-py[mcp]",
+          "description": "Install parseur-py with the MCP server extra."
+        }
+      ],
+      "environmentVariables": [
+        {
+          "name": "PARSEUR_API_KEY",
+          "description": "Your Parseur API key (from https://app.parseur.com/account/api).",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "PARSEUR_API_BASE",
+          "description": "Override the Parseur API base URL (defaults to https://api.parseur.com).",
+          "isRequired": false
+        }
+      ]
+    }
+  ]
+}

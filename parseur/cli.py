@@ -5,6 +5,55 @@ import click
 
 import parseur
 
+WAIT_OPTION = click.option(
+    "--wait",
+    is_flag=True,
+    default=False,
+    help=(
+        "Block until the document reaches a final status "
+        "(polls every 5s, up to 10 min), showing live progress."
+    ),
+)
+
+
+def progress_printer():
+    """Return an ``on_poll(elapsed, status)`` callback rendering a progress bar.
+
+    Progress is written to stderr so stdout stays a clean JSON document.
+    """
+
+    def on_poll(elapsed, status):
+        remaining = max(0, parseur.document.MAX_WAIT - elapsed)
+        width = 24
+        fraction = min(1.0, elapsed / parseur.document.MAX_WAIT)
+        filled = int(fraction * width)
+        bar = "█" * filled + "░" * (width - filled)
+        click.echo(
+            f"\r⏳ [{bar}] {status:<9} elapsed {elapsed:4.0f}s · ETA ≤ {remaining:4.0f}s",
+            nl=False,
+            err=True,
+        )
+
+    return on_poll
+
+
+DOWNLOAD_FORMATS = ["csv", "json", "xlsx"]
+EXPORT_FORMATS = ["csv", "xlsx"]
+
+
+def write_download(content, output):
+    """Write downloaded bytes to ``output`` if given, otherwise to stdout.
+
+    Binary formats (xlsx) are written through the raw stdout buffer so they
+    survive redirection, e.g. ``parseur download-mailbox 123 > results.csv``.
+    """
+    if output:
+        with open(output, "wb") as fh:
+            fh.write(content)
+        click.echo(f"✅ Saved {len(content)} bytes to {output}", err=True)
+    else:
+        click.get_binary_stream("stdout").write(content)
+
 
 def headers_to_dict(headers):
     headers_dict = {}
@@ -98,6 +147,97 @@ def get_mailbox_schema(mailbox_id):
     """Get schema of a mailbox."""
     result = parseur.Mailbox.schema(mailbox_id)
     click.echo(parseur.to_json(result))
+
+
+@cli.command("download-mailbox")
+@click.argument("mailbox_id", type=int)
+@click.option(
+    "--format",
+    "fmt",
+    type=click.Choice(DOWNLOAD_FORMATS),
+    default="csv",
+    help="Export file format (default: csv).",
+)
+@click.option(
+    "--output",
+    "-o",
+    type=click.Path(),
+    help="Write to this file instead of stdout.",
+)
+def download_mailbox(mailbox_id, fmt, output):
+    """Download all parsed results of a mailbox (one row per document)."""
+    content = parseur.Mailbox.download(mailbox_id, fmt)
+    write_download(content, output)
+
+
+# ------------------------
+# Parser field commands
+# ------------------------
+
+
+@cli.command("list-parser-fields")
+@click.argument("mailbox_id", type=int)
+def list_parser_fields(mailbox_id):
+    """List the parser fields configured on a mailbox."""
+    fields = parseur.ParserField.list(mailbox_id)
+    click.echo(parseur.to_json(fields))
+
+
+@cli.command("download-field")
+@click.argument("mailbox_id", type=int)
+@click.argument("field_id", type=str)
+@click.option(
+    "--format",
+    "fmt",
+    type=click.Choice(DOWNLOAD_FORMATS),
+    default="csv",
+    help="Export file format (default: csv).",
+)
+@click.option(
+    "--output",
+    "-o",
+    type=click.Path(),
+    help="Write to this file instead of stdout.",
+)
+def download_field(mailbox_id, field_id, fmt, output):
+    """Download a table field's rows (one row per line item)."""
+    content = parseur.ParserField.download(mailbox_id, field_id, fmt)
+    write_download(content, output)
+
+
+# ------------------------
+# Export commands
+# ------------------------
+
+
+@cli.command("list-export-configs")
+@click.argument("mailbox_id", type=int)
+def list_export_configs(mailbox_id):
+    """List the export configurations of a mailbox."""
+    configs = parseur.ExportConfig.list(mailbox_id)
+    click.echo(parseur.to_json(configs))
+
+
+@cli.command("download-export")
+@click.argument("mailbox_id", type=int)
+@click.argument("export_config_id", type=int)
+@click.option(
+    "--format",
+    "fmt",
+    type=click.Choice(EXPORT_FORMATS),
+    default="csv",
+    help="Export file format (default: csv).",
+)
+@click.option(
+    "--output",
+    "-o",
+    type=click.Path(),
+    help="Write to this file instead of stdout.",
+)
+def download_export(mailbox_id, export_config_id, fmt, output):
+    """Download a custom export configuration's file."""
+    content = parseur.ExportConfig.download(mailbox_id, export_config_id, fmt)
+    write_download(content, output)
 
 
 # ------------------------
@@ -200,6 +340,22 @@ def copy_document(document_id, target_mailbox_id):
     click.echo(parseur.to_json(result))
 
 
+@cli.command("split-document")
+@click.argument("document_id", type=str)
+def split_document(document_id):
+    """Split a multi-page document per the mailbox's split settings."""
+    result = parseur.Document.split(document_id)
+    click.echo(parseur.to_json(result))
+
+
+@cli.command("reverse-split-document")
+@click.argument("document_id", type=str)
+def reverse_split_document(document_id):
+    """Undo a previous split of a document."""
+    result = parseur.Document.reverse_split(document_id)
+    click.echo(parseur.to_json(result))
+
+
 @cli.command("get-document-logs")
 @click.argument("document_id", type=str)
 def get_document_logs(document_id):
@@ -219,9 +375,21 @@ def delete_document(document_id):
 @cli.command("upload-file")
 @click.argument("mailbox_id", type=int)
 @click.argument("file_path", type=click.Path(exists=True))
-def upload_file(mailbox_id, file_path):
-    """Upload a document file to a mailbox."""
-    result = parseur.Document.upload_file(mailbox_id, file_path)
+@WAIT_OPTION
+def upload_file(mailbox_id, file_path, wait):
+    """Upload a document file to a mailbox (optionally wait for processing)."""
+    if not wait:
+        result = parseur.Document.upload_file(mailbox_id, file_path)
+        click.echo(parseur.to_json(result))
+        return
+    try:
+        result = parseur.Document.upload_file_and_wait(
+            mailbox_id, file_path, on_poll=progress_printer()
+        )
+    except TimeoutError as e:
+        click.echo("", err=True)
+        raise click.ClickException(str(e))
+    click.echo("", err=True)  # end the progress line
     click.echo(parseur.to_json(result))
 
 
@@ -240,11 +408,28 @@ def upload_folder(mailbox_id, folder_path):
 @click.option("--sender", default=None, help="Sender email (optional)")
 @click.option("--body-html", default=None, help="HTML text content")
 @click.option("--body-plain", default=None, help="Plain text content")
-def upload_text(recipient, subject, sender, body_html, body_plain):
-    """Upload text content to a mailbox by email address."""
-    result = parseur.Document.upload_text(
-        recipient, subject, sender, body_html, body_plain
-    )
+@WAIT_OPTION
+def upload_text(recipient, subject, sender, body_html, body_plain, wait):
+    """Upload text content to a mailbox (optionally wait for processing)."""
+    if not wait:
+        result = parseur.Document.upload_text(
+            recipient, subject, sender, body_html, body_plain
+        )
+        click.echo(parseur.to_json(result))
+        return
+    try:
+        result = parseur.Document.upload_text_and_wait(
+            recipient,
+            subject,
+            sender,
+            body_html,
+            body_plain,
+            on_poll=progress_printer(),
+        )
+    except TimeoutError as e:
+        click.echo("", err=True)
+        raise click.ClickException(str(e))
+    click.echo("", err=True)  # end the progress line
     click.echo(parseur.to_json(result))
 
 
@@ -412,9 +597,11 @@ def listen(
 ):
     """
     Listen to a Parseur event in real time with a temporary webhook.
-    Example:
-      parseur listen --event document.parsed_ok --mailbox-id 12345
-      parseur listen --event document.processed --mailbox-id 12345 --redirect-url http://localhost --redirect-port 8000
+
+    Example::
+
+        parseur listen --event document.processed --mailbox-id 12345
+        parseur listen --event document.processed --mailbox-id 12345 --redirect-url http://localhost --redirect-port 8000
     """
     from . import server
 
@@ -471,6 +658,30 @@ def listen(
         redirect_url=redirect_url,
         silent=silent,
     )
+
+
+# ------------------------
+# MCP server
+# ------------------------
+
+
+@cli.command("mcp")
+def mcp():
+    """
+    Run the Parseur MCP server (requires the [mcp] extra).
+
+    Exposes Parseur as Model Context Protocol tools over stdio so AI
+    assistants (Claude Desktop, Cursor, ...) can manage your mailboxes,
+    documents, and webhooks.
+
+    Install with: pip install "parseur-py[mcp]"
+    """
+    try:
+        from . import mcp_server
+    except ImportError as e:
+        raise click.ClickException(str(e))
+
+    mcp_server.main()
 
 
 if __name__ == "__main__":
