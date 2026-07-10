@@ -244,122 +244,13 @@ Your webhook endpoint will receive POST notifications with Parseur payloads, ena
 
 ## 🤖 MCP Server (AI assistants)
 
-**parseur-py** ships an [MCP](https://modelcontextprotocol.io) server that exposes Parseur as tools any MCP-compatible AI assistant (Claude Desktop, Cursor, Claude Code, …) can call directly — listing mailboxes, uploading documents, reading parsed results, managing webhooks, and more.
+**parseur-py** ships an [MCP](https://modelcontextprotocol.io) server that exposes Parseur as tools any MCP-compatible AI assistant (Claude Desktop, Codex, Cursor, Claude Code, and others) can call directly.
 
-### Install
+Start with [MCP.md](MCP.md) if you want to connect Parseur to Claude, Codex, or Cursor. It separates the recommended user setup from the developer setup and includes copy-paste configs for each client.
 
-The MCP server is an **optional** feature, behind the `mcp` extra (it pulls in
-the `mcp` SDK and `pydantic`; the base `parseur-py` install does not):
+The full tool reference is in [MCP-TOOLS.md](MCP-TOOLS.md), and maintainer publishing instructions are in [MCP-PUBLISHING.md](MCP-PUBLISHING.md).
 
-```bash
-pip install "parseur-py[mcp]"
-```
-
-> Zero-install: if you have [`uv`](https://docs.astral.sh/uv/), you don't need to
-> install anything — `uvx --from "parseur-py[mcp]" parseur-py` runs the server in
-> a throwaway environment. This is the recommended way to wire it into an MCP
-> client (see below).
-
-### Run
-
-The server speaks MCP over **stdio**. It reads your API key from
-`~/.parseur.conf` (run `parseur init` first) or from the `PARSEUR_API_KEY`
-environment variable (which takes precedence — MCP clients usually inject it).
-
-```bash
-parseur mcp                     # via the main CLI (needs the [mcp] extra)
-parseur-mcp                     # dedicated console script
-python -m parseur.mcp_server    # as a module
-uvx --from "parseur-py[mcp]" parseur-py   # zero-install with uv
-```
-
-### Configure your client
-
-Add Parseur to your MCP client config. Example for **Claude Desktop**
-(`claude_desktop_config.json`).
-
-Zero-install with `uv` (recommended — nothing to install or keep updated):
-
-```json
-{
-  "mcpServers": {
-    "parseur": {
-      "command": "uvx",
-      "args": ["--from", "parseur-py[mcp]", "parseur-py"],
-      "env": {
-        "PARSEUR_API_KEY": "YOUR_PARSEUR_API_KEY"
-      }
-    }
-  }
-}
-```
-
-Or, if you installed `parseur-py[mcp]` yourself, point at the console script:
-
-```json
-{
-  "mcpServers": {
-    "parseur": {
-      "command": "parseur-mcp",
-      "env": {
-        "PARSEUR_API_KEY": "YOUR_PARSEUR_API_KEY"
-      }
-    }
-  }
-}
-```
-
-### Available tools
-
-Every tool carries a title, a description, per-argument descriptions, behavioral
-annotations (read-only / destructive / idempotent / open-world hints), and a
-structured JSON output schema — so the assistant understands exactly what each
-command does, what it expects, and what it returns. Destructive tools
-(`delete_*`) are flagged so clients can ask for confirmation first.
-
-The server exposes the full client surface as **54 MCP tools**:
-
-- **Mailboxes**: `list_mailboxes`, `get_mailbox`, `get_mailbox_schema`, `create_mailbox`, `delete_mailbox`
-- **Mailbox settings** (one tool per setting, instead of a generic update): `rename_mailbox`, `set_ai_engine`, `set_ai_instructions`, `set_email_processing`, `set_metadata`, `set_timezone`, `set_date_format`, `set_decimal_separator`, `set_allowed_extensions`, `set_sender_filter`, `split_by_ai`, `split_by_page`, `split_by_page_range`, `split_by_keywords`, `process_page_range`, `process_odd_pages`, `process_even_pages`
-- **Parser fields**: `list_parser_fields`, `add_parser_field`, `update_parser_field`, `delete_parser_field`
-- **Documents**: `list_documents`, `get_document`, `get_document_logs`, `reprocess_document`, `skip_document`, `copy_document`, `split_document`, `reverse_split_document`, `delete_document`
-- **Uploads**: `upload_file`, `upload_text` (asynchronous) and `upload_file_and_wait`, `upload_text_and_wait`, `wait_for_document` (block until parsed)
-- **Webhooks**: `list_webhooks`, `get_webhook`, `create_webhook`, `delete_webhook`, `enable_webhook`, `pause_webhook`
-- **Exports**: `get_mailbox_export`, `get_table_export`, `list_export_fields`, `list_export_configs`, `get_export_config`, `create_export_config`, `update_export_config`, `delete_export_config`
-
-> **Uploading files over MCP:** `upload_file` takes a **file path** and the server reads it directly — just give the absolute path, no base64. When the desktop app launches the server locally (the usual setup) it runs on your machine, so it can read your files; no extra permission/config is needed (this server is not sandboxed to specific folders). To copy a document that is already in another mailbox, use `copy_document` instead — no file transfer at all.
-
-> **Getting results out as a file:** three kinds of export, each returning ready-to-use, self-authenticating `csv` / `json` / `xlsx` download links you can hand to the user. `get_mailbox_export` exports the whole mailbox (one row per document); `get_table_export` exports a single table field's rows (one row per line item); for a custom column selection, build an export config with `list_export_fields` + `create_export_config`.
-
-### Workflow
-
-The tools follow the lifecycle of a mailbox — the server ships these same instructions so the assistant can follow the flow on its own:
-
-1. **Create a mailbox** with just a title (`create_mailbox`). Don't define fields up front: Parseur auto-detects them from the first documents during its identification phase. Adjust them afterwards with `add_parser_field` / `update_parser_field` / `delete_parser_field`.
-2. **Send documents** to parse with `upload_file` (a path on the server's machine) or `upload_text` (email/HTML content).
-3. **Wait for the result.** Parsing is asynchronous: a document is pending while its status is `INCOMING` / `ANALYZING` / `PROGRESS` and finished at `PARSEDOK` (or `PARSEDKO` / `EXPORTKO`). The parsed data is in the document's `result` field, populated only once it reaches `PARSEDOK`. Prefer `upload_file_and_wait` / `upload_text_and_wait` to get it in one call, or `wait_for_document` to wait on an existing document.
-4. **Get the data out** as a file via the three exports above, or push each parsed document to a URL in real time with `create_webhook`.
-
-IDs follow a simple convention: mailboxes and webhooks use an integer id, documents a string id, parser/table fields a `PF...` string id, and export configs an integer id.
-
-### Publishing to the MCP Registry
-
-The server is described by [`server.json`](server.json) and can be published to the official [MCP Registry](https://registry.modelcontextprotocol.io) under the `io.github.parseur/parseur-py` name. Ownership is verified through the GitHub `parseur` organization and the `<!-- mcp-name: io.github.parseur/parseur-py -->` marker shipped in this README (so it is present in the PyPI package).
-
-```bash
-# 1. Install the publisher CLI
-curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
-
-# 2. Authenticate (opens GitHub; you must be a member of the `parseur` org)
-./mcp-publisher login github
-
-# 3. Publish the version described in server.json
-./mcp-publisher publish
-```
-
-Before publishing, make sure the version in `server.json` (both the top-level `version` and `packages[].version`) matches a release of `parseur-py` already on PyPI whose README contains the `mcp-name` marker. A GitHub Actions workflow (`.github/workflows/publish-mcp-registry.yml`) does this automatically on each GitHub release using GitHub OIDC.
-
-Once published, clients install and run the server with:
+Quick zero-install command:
 
 ```bash
 uvx --from "parseur-py[mcp]" parseur-py
