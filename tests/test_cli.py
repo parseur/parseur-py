@@ -71,3 +71,35 @@ def test_download_rejects_bad_format():
     runner = CliRunner()
     result = runner.invoke(cli, ["download-mailbox", "123", "--format", "pdf"])
     assert result.exit_code != 0
+
+
+@patch("parseur.mcp_server.main")
+def test_mcp_runs_local_stdio_server(mock_main):
+    runner = CliRunner()
+
+    result = runner.invoke(cli, ["mcp"])
+
+    assert result.exit_code == 0
+    mock_main.assert_called_once_with()
+
+
+@patch("parseur.oauth.OAuthClient.login", return_value="access-token")
+def test_login_opens_oauth_flow(mock_login):
+    runner = CliRunner()
+
+    result = runner.invoke(cli, ["login", "--api-base", "https://example.test"])
+
+    assert result.exit_code == 0
+    assert "Signed in" in result.output
+    mock_login.assert_called_once_with()
+
+
+@patch("parseur.oauth.OAuthClient.logout")
+def test_logout_removes_oauth_credentials(mock_logout):
+    runner = CliRunner()
+
+    result = runner.invoke(cli, ["logout"])
+
+    assert result.exit_code == 0
+    assert "Signed out" in result.output
+    mock_logout.assert_called_once_with()

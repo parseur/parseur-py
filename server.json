@@ -29,8 +29,8 @@
       "environmentVariables": [
         {
           "name": "PARSEUR_API_KEY",
-          "description": "Your Parseur API key (from https://app.parseur.com/account/api).",
-          "isRequired": true,
+          "description": "Authentication method 2: optional Parseur API key. When omitted, authentication method 1 opens the OAuth login in a browser.",
+          "isRequired": false,
           "isSecret": true
         },
         {

@@ -89,8 +89,8 @@ def ensure_api_key():
     """Allow overriding the configured API key/base via environment variables.
 
     MCP clients usually inject credentials through the server's environment,
-    so ``PARSEUR_API_KEY`` (and optionally ``PARSEUR_API_BASE``) take
-    precedence over the values loaded from ``~/.parseur.conf``.
+    so ``PARSEUR_API_KEY`` (and optionally ``PARSEUR_API_BASE``) takes
+    precedence over values from ``~/.parseur.conf``.
     """
     env_key = os.environ.get("PARSEUR_API_KEY")
     env_base = os.environ.get("PARSEUR_API_BASE")
@@ -1320,7 +1320,11 @@ Read-only tools never modify data and are safe to call freely. The destructive t
 def main() -> None:
     """Entry point for the ``parseur mcp`` command and ``parseur-mcp`` script."""
     ensure_api_key()
-    mcp.run()
+    if not parseur.api_key:
+        from parseur.oauth import OAuthClient
+
+        OAuthClient(parseur.api_base).get_access_token(interactive=True)
+    mcp.run(transport="stdio")
 
 
 if __name__ == "__main__":

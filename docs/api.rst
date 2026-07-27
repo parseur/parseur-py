@@ -13,6 +13,23 @@ Installation
 Quick Start
 -----------
 
+Choose OAuth:
+
+.. code-block:: bash
+
+   parseur login
+
+Then use the client without setting an API key:
+
+.. code-block:: python
+
+   import parseur
+
+   for mailbox in parseur.Mailbox.list():
+      print(mailbox["name"])
+
+Alternatively, choose API-key authentication:
+
 .. code-block:: python
 
    import parseur
@@ -22,11 +39,11 @@ Quick Start
    for mailbox in parseur.Mailbox.list():
       print(mailbox["name"])
 
-
 Configuration
 -------------
 
-The CLI can save and load configuration from a file:
+For API-key authentication, the CLI can save and load configuration from a
+file:
 
 - By default: ``~/.parseur.conf``
 - Fields:
@@ -42,6 +59,17 @@ Example:
 Overview
 --------
 
+Authentication
+++++++++++++++
+
+The CLI and Python client support two authentication methods:
+
+1. Run ``parseur login`` to use OAuth 2.0. The browser login stores credentials
+   in ``~/.parseur.oauth.json`` and the client refreshes them automatically.
+2. Configure a Parseur API key globally or per call.
+
+When an API key is configured it takes priority. Otherwise, the client uses
+stored OAuth credentials.
 
 API Key
 +++++++
@@ -703,8 +731,22 @@ MCP Server
 
 ``parseur-py`` includes a `Model Context Protocol <https://modelcontextprotocol.io>`_
 server that exposes the client as tools for AI assistants (Claude Desktop,
-Cursor, Claude Code, ...). It speaks MCP over stdio and reads your API key
-from ``~/.parseur.conf`` or the ``PARSEUR_API_KEY`` environment variable.
+Cursor, Claude Code, ...).
+
+The MCP server runs locally over stdio and supports exactly two authentication
+methods:
+
+1. **OAuth 2.0** opens the Parseur login in a browser, receives the result on a
+   temporary loopback callback, stores credentials in
+   ``~/.parseur.oauth.json``, and refreshes them automatically. No OAuth access
+   token, MCP host, or MCP port is configured manually.
+2. **API-key authentication** uses ``PARSEUR_API_KEY`` or the key loaded from
+   ``~/.parseur.conf``. It is suitable for headless environments and does not
+   open a browser.
+
+Authentication is selected in this order: the ``PARSEUR_API_KEY`` environment
+variable, the API key in ``~/.parseur.conf``, stored OAuth credentials, then a
+new OAuth browser login. An API key therefore takes priority over OAuth.
 
 Install the extra:
 
@@ -720,7 +762,35 @@ Run the server:
    # or: parseur-mcp
    # or: python -m parseur.mcp_server
 
+OAuth configuration
+^^^^^^^^^^^^^^^^^^^
+
 Example Claude Desktop configuration (``claude_desktop_config.json``):
+
+.. code-block:: json
+
+   {
+     "mcpServers": {
+       "parseur": {
+         "command": "parseur-mcp"
+       }
+     }
+   }
+
+The first start opens the Parseur login page. You can also authorize in
+advance:
+
+.. code-block:: bash
+
+   parseur login
+
+OAuth credentials are stored in ``~/.parseur.oauth.json`` with user-only file
+permissions.
+
+API-key configuration
+^^^^^^^^^^^^^^^^^^^^^
+
+To use an API key instead, configure it in the MCP process:
 
 .. code-block:: json
 
@@ -734,6 +804,12 @@ Example Claude Desktop configuration (``claude_desktop_config.json``):
        }
      }
    }
+
+You can alternatively save the key in ``~/.parseur.conf``:
+
+.. code-block:: bash
+
+   parseur init --api-key YOUR_PARSEUR_API_KEY
 
 Every tool carries a title, a description, per-argument descriptions,
 behavioral annotations (read-only / destructive / idempotent / open-world

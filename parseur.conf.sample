@@ -1,3 +1,5 @@
 [parseur]
-api_token = abc123
-base_url = https://api.parseur.com
+# Authentication method 2: API key.
+# Remove api_key (or leave this file unused) to use OAuth instead.
+api_key = abc123
+api_base = https://api.parseur.com

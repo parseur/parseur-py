@@ -5,23 +5,37 @@ from urllib.parse import urljoin
 import requests
 
 import parseur
+from parseur.oauth import OAuthClient, OAuthError
 
 
 class Client:
     @classmethod
     def auth_headers(cls, json=True, api_key: Optional[str] = None) -> Dict[str, str]:
-        # An explicitly provided api_key takes priority over the global one.
-        key = api_key or parseur.api_key
-        if not key:
-            raise ValueError("API token is required. Run 'parseur init' first.")
-        headers = {"Authorization": f"Token {key}"}
+        # An explicitly provided API key takes priority over all other credentials.
+        if api_key:
+            authorization = f"Token {api_key}"
+        elif parseur.api_key:
+            authorization = f"Token {parseur.api_key}"
+        else:
+            try:
+                access_token = OAuthClient(parseur.api_base).get_access_token()
+            except OAuthError as error:
+                raise ValueError(str(error)) from error
+            authorization = f"Bearer {access_token}"
+
+        headers = {"Authorization": authorization}
         if json:
             headers["Content-Type"] = "application/json"
         return headers
 
     @classmethod
     def request(
-        cls, method: str, endpoint: str, *, api_key: Optional[str] = None, **kwargs
+        cls,
+        method: str,
+        endpoint: str,
+        *,
+        api_key: Optional[str] = None,
+        **kwargs,
     ) -> Any:
         url = urljoin(parseur.api_base, endpoint)
         logging.debug(f"Request: {method} {url}")
@@ -34,7 +48,12 @@ class Client:
         return response.json()
 
     @classmethod
-    def download(cls, url: str, *, api_key: Optional[str] = None) -> bytes:
+    def download(
+        cls,
+        url: str,
+        *,
+        api_key: Optional[str] = None,
+    ) -> bytes:
         """GET a (possibly relative) URL with auth and return the raw bytes."""
         full_url = url if url.startswith("http") else urljoin(parseur.api_base, url)
         headers = cls.auth_headers(json=False, api_key=api_key)

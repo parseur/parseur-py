@@ -141,3 +141,27 @@ def test_ensure_api_key_reads_env(monkeypatch):
 
     assert parseur.api_key == "env-token"
     assert parseur.api_base == "https://example.test"
+
+
+@patch("parseur.oauth.OAuthClient.get_access_token", return_value="oauth-token")
+@patch("parseur.mcp_server.mcp.run")
+def test_mcp_starts_oauth_when_api_key_is_missing(mock_run, mock_access_token):
+    import parseur
+
+    parseur.api_key = None
+    with patch.dict("os.environ", {}, clear=True):
+        mcp_server.main()
+
+    mock_access_token.assert_called_once_with(interactive=True)
+    mock_run.assert_called_once_with(transport="stdio")
+
+
+@patch("parseur.oauth.OAuthClient.get_access_token")
+@patch("parseur.mcp_server.mcp.run")
+def test_mcp_keeps_api_key_auth_available(mock_run, mock_access_token, monkeypatch):
+    monkeypatch.setenv("PARSEUR_API_KEY", "api-key")
+
+    mcp_server.main()
+
+    mock_access_token.assert_not_called()
+    mock_run.assert_called_once_with(transport="stdio")

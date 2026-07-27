@@ -670,9 +670,8 @@ def mcp():
     """
     Run the Parseur MCP server (requires the [mcp] extra).
 
-    Exposes Parseur as Model Context Protocol tools over stdio so AI
-    assistants (Claude Desktop, Cursor, ...) can manage your mailboxes,
-    documents, and webhooks.
+    Exposes Parseur as Model Context Protocol tools over local stdio. It uses
+    the configured API key, or opens the Parseur OAuth login when none exists.
 
     Install with: pip install "parseur-py[mcp]"
     """
@@ -682,6 +681,37 @@ def mcp():
         raise click.ClickException(str(e))
 
     mcp_server.main()
+
+
+@cli.command("login")
+@click.option(
+    "--api-base",
+    default=parseur.DEFAULT_API_BASE,
+    help="Optional API base URL",
+)
+def oauth_login(api_base):
+    """Sign in to Parseur in a browser and securely store OAuth credentials."""
+    from .oauth import OAuthClient, OAuthError
+
+    try:
+        OAuthClient(api_base).login()
+    except OAuthError as error:
+        raise click.ClickException(str(error))
+    click.echo("✅ Signed in to Parseur.")
+
+
+@cli.command("logout")
+@click.option(
+    "--api-base",
+    default=parseur.DEFAULT_API_BASE,
+    help="Optional API base URL",
+)
+def oauth_logout(api_base):
+    """Remove locally stored Parseur OAuth credentials."""
+    from .oauth import OAuthClient
+
+    OAuthClient(api_base).logout()
+    click.echo("✅ Signed out of Parseur.")
 
 
 if __name__ == "__main__":

@@ -6,6 +6,7 @@ import pytest
 
 import parseur
 from parseur.client import Client
+from parseur.oauth import OAuthError
 
 
 def _ok(json_value=None):
@@ -27,10 +28,22 @@ def test_auth_headers_falls_back_to_global():
     assert Client.auth_headers(api_key=None)["Authorization"] == "Token global-key"
 
 
-def test_auth_headers_requires_a_key():
+@patch("parseur.client.OAuthClient")
+def test_auth_headers_requires_a_credential(mock_oauth):
     parseur.api_key = None
+    mock_oauth.return_value.get_access_token.side_effect = OAuthError("missing")
     with pytest.raises(ValueError):
         Client.auth_headers()
+
+
+@patch("parseur.client.OAuthClient")
+def test_auth_headers_uses_stored_oauth_token(mock_oauth):
+    parseur.api_key = None
+    mock_oauth.return_value.get_access_token.return_value = "oauth-token"
+
+    assert Client.auth_headers()["Authorization"] == "Bearer oauth-token"
+    assert Client.auth_headers(api_key="call-key")["Authorization"] == "Token call-key"
+    mock_oauth.return_value.get_access_token.assert_called_once_with()
 
 
 @patch("parseur.client.requests.request")

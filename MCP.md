@@ -3,62 +3,143 @@
 Use Parseur directly from an MCP-compatible assistant such as Claude Desktop,
 Claude Code, Codex, or Cursor.
 
-With the Parseur MCP server, your assistant can list mailboxes, upload
-documents, wait for parsing, read extracted results, create webhooks, and export
-data without you writing API code.
+The server runs locally on the client machine over stdio. It can therefore
+upload local files and does not need an MCP host or port.
 
-## Start Here
+## Authentication
 
-Choose the path that matches what you are trying to do:
+The local MCP server supports exactly two authentication methods. You only
+need to configure one:
 
-| You want to... | Use this path |
-| --- | --- |
-| Use Parseur from Claude, Codex, or Cursor | [User installation](#user-installation-recommended) |
-| Work on `parseur-py` itself | [Developer installation](#developer-installation) |
-| Publish the MCP server to the registry | [MCP-PUBLISHING.md](MCP-PUBLISHING.md) |
-| See every available MCP tool | [MCP-TOOLS.md](MCP-TOOLS.md) |
+| Method | Recommended for | What you configure |
+| --- | --- | --- |
+| OAuth 2.0 | Desktop MCP clients and interactive use | No credential; only the stdio command |
+| Parseur API key | Headless machines, CI, and automation | `PARSEUR_API_KEY` |
 
-## User Installation Recommended
+### Method 1: OAuth 2.0
 
-This is the easiest setup for most users. You do not need to install
-`parseur-py` globally. Your MCP client will start the server when it needs it.
+If no API key is configured, `parseur-py` opens the Parseur login and consent
+page when the MCP process starts. It uses Authorization Code with PKCE and
+receives the result through a temporary callback on a free `127.0.0.1` port.
+This callback is not the MCP server and is closed as soon as login finishes.
+There is no `MCP_HOST` or `MCP_PORT` to configure.
 
-You need:
+OAuth credentials are stored in `~/.parseur.oauth.json` with user-only file
+permissions. Access tokens are renewed automatically using the stored refresh
+token. Do not put an OAuth access token in the MCP configuration.
 
-- A Parseur API key
-- [`uv`](https://docs.astral.sh/uv/) available on your machine
-- One MCP client: Claude Desktop, Claude Code, Codex, or Cursor
+You can sign in before starting the MCP client:
 
-The command your MCP client will run is:
+```bash
+uvx --from "parseur-py[mcp]" parseur login
+```
+
+Use `parseur logout` to remove the locally stored OAuth credentials.
+
+### Method 2: Parseur API key
+
+Set `PARSEUR_API_KEY` in the environment of the MCP process:
+
+```json
+{
+  "env": {
+    "PARSEUR_API_KEY": "YOUR_PARSEUR_API_KEY"
+  }
+}
+```
+
+Alternatively, save the key once with:
+
+```bash
+parseur init --api-key YOUR_PARSEUR_API_KEY
+```
+
+The API key is then read from `~/.parseur.conf`. This method does not open a
+browser.
+
+### Which method is selected?
+
+Authentication is selected in this order:
+
+1. `PARSEUR_API_KEY`, when set by the MCP client.
+2. The API key stored in `~/.parseur.conf`.
+3. Stored OAuth credentials in `~/.parseur.oauth.json`.
+4. If none exists, the OAuth login page opens automatically.
+
+An API key therefore takes priority over OAuth. To switch from an API key to
+OAuth, remove `PARSEUR_API_KEY` and the saved `api_key`, then run
+`parseur login`.
+
+## Claude
+
+### Claude Desktop
+
+Add a local stdio MCP server using:
 
 ```bash
 uvx --from "parseur-py[mcp]" parseur-py
 ```
 
-Why this is recommended:
+This configuration uses OAuth: because it contains no `PARSEUR_API_KEY`,
+Parseur opens in your browser the first time Claude launches the server.
 
-- No virtualenv to manage
-- No global Python package to update
-- The assistant starts the server automatically
-- Works well with Claude, Codex, and Cursor config files
+For API-key authentication, use this configuration:
 
-If you prefer installing a local command yourself, use:
-
-```bash
-pip install "parseur-py[mcp]"
+```json
+{
+  "mcpServers": {
+    "parseur": {
+      "command": "uvx",
+      "args": ["--from", "parseur-py[mcp]", "parseur-py"],
+      "env": {
+        "PARSEUR_API_KEY": "YOUR_PARSEUR_API_KEY"
+      }
+    }
+  }
+}
 ```
 
-That exposes:
+### Claude Code
 
 ```bash
-parseur-mcp
-parseur mcp
+claude mcp add parseur -- uvx --from "parseur-py[mcp]" parseur-py
 ```
+
+This command uses OAuth unless `PARSEUR_API_KEY` is supplied to the process.
+
+## Codex
+
+```bash
+codex mcp add parseur -- uvx --from "parseur-py[mcp]" parseur-py
+```
+
+Or add the server to `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.parseur]
+command = "uvx"
+args = ["--from", "parseur-py[mcp]", "parseur-py"]
+```
+
+## Cursor
+
+Open **Settings → Tools & Integrations → MCP** and add:
+
+```json
+{
+  "mcpServers": {
+    "parseur": {
+      "command": "uvx",
+      "args": ["--from", "parseur-py[mcp]", "parseur-py"]
+    }
+  }
+}
+```
+
+Cursor launches the local process, which opens the Parseur login flow. Add
+`"env": {"PARSEUR_API_KEY": "YOUR_PARSEUR_API_KEY"}` to use an API key instead.
 
 ## Developer Installation
-
-Use this if you are changing `parseur-py` locally and want your assistant to run
-your checkout instead of the PyPI release.
 
 ```bash
 git clone https://github.com/parseur/parseur-py.git
@@ -66,249 +147,22 @@ cd parseur-py
 pip install -e ".[mcp]"
 ```
 
-Then configure your MCP client to run:
+Run the local stdio server:
 
 ```bash
-parseur-mcp
+parseur mcp
 ```
 
-For direct debugging from the repository:
+To test against a local Parseur API, point login and MCP at the same base:
 
 ```bash
-python -m parseur.mcp_server
+PARSEUR_API_BASE=http://localhost:8000 parseur login --api-base http://localhost:8000
+PARSEUR_API_BASE=http://localhost:8000 parseur mcp
 ```
-
-## Authentication
-
-The MCP server needs a Parseur API key.
-
-Recommended: put the key in your MCP client config as `PARSEUR_API_KEY`. This is
-the clearest setup because the assistant always starts the server with the right
-credentials.
-
-```json
-"env": {
-  "PARSEUR_API_KEY": "YOUR_PARSEUR_API_KEY"
-}
-```
-
-Alternative: initialize the regular Parseur config once:
-
-```bash
-parseur init --api-key YOUR_PARSEUR_API_KEY
-```
-
-The MCP server reads credentials in this order:
-
-1. `PARSEUR_API_KEY` environment variable
-2. `~/.parseur.conf`
-
-## Install In Claude
-
-### Claude Code Command Line
-
-For normal user installation:
-
-```bash
-claude mcp add parseur \
-  -e PARSEUR_API_KEY=YOUR_PARSEUR_API_KEY \
-  -- uvx --from "parseur-py[mcp]" parseur-py
-```
-
-For developer installation:
-
-```bash
-claude mcp add parseur \
-  -e PARSEUR_API_KEY=YOUR_PARSEUR_API_KEY \
-  -- parseur-mcp
-```
-
-Check that Claude sees it:
-
-```bash
-claude mcp list
-```
-
-### Claude Desktop Config
-
-Add Parseur to `claude_desktop_config.json`.
-
-Common locations:
-
-- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
-
-User installation:
-
-```json
-{
-  "mcpServers": {
-    "parseur": {
-      "command": "uvx",
-      "args": ["--from", "parseur-py[mcp]", "parseur-py"],
-      "env": {
-        "PARSEUR_API_KEY": "YOUR_PARSEUR_API_KEY"
-      }
-    }
-  }
-}
-```
-
-Developer installation:
-
-```json
-{
-  "mcpServers": {
-    "parseur": {
-      "command": "parseur-mcp",
-      "env": {
-        "PARSEUR_API_KEY": "YOUR_PARSEUR_API_KEY"
-      }
-    }
-  }
-}
-```
-
-Restart Claude Desktop after editing the file.
-
-## Install In Codex
-
-### Codex Command Line
-
-For normal user installation:
-
-```bash
-codex mcp add parseur \
-  --env PARSEUR_API_KEY=YOUR_PARSEUR_API_KEY \
-  -- uvx --from "parseur-py[mcp]" parseur-py
-```
-
-For developer installation:
-
-```bash
-codex mcp add parseur \
-  --env PARSEUR_API_KEY=YOUR_PARSEUR_API_KEY \
-  -- parseur-mcp
-```
-
-Check that Codex sees it:
-
-```bash
-codex mcp list
-```
-
-### Codex Config File
-
-You can also edit `~/.codex/config.toml`.
-
-User installation:
-
-```toml
-[mcp_servers.parseur]
-command = "uvx"
-args = ["--from", "parseur-py[mcp]", "parseur-py"]
-env = { PARSEUR_API_KEY = "YOUR_PARSEUR_API_KEY" }
-```
-
-Developer installation:
-
-```toml
-[mcp_servers.parseur]
-command = "parseur-mcp"
-env = { PARSEUR_API_KEY = "YOUR_PARSEUR_API_KEY" }
-```
-
-Restart Codex after editing the file.
-
-## Install In Cursor
-
-Cursor reads MCP servers from `.cursor/mcp.json` in a project, or from Cursor's
-global MCP configuration.
-
-### Cursor Project Config
-
-Create `.cursor/mcp.json` in your project.
-
-User installation:
-
-```json
-{
-  "mcpServers": {
-    "parseur": {
-      "command": "uvx",
-      "args": ["--from", "parseur-py[mcp]", "parseur-py"],
-      "env": {
-        "PARSEUR_API_KEY": "YOUR_PARSEUR_API_KEY"
-      }
-    }
-  }
-}
-```
-
-Developer installation:
-
-```json
-{
-  "mcpServers": {
-    "parseur": {
-      "command": "parseur-mcp",
-      "env": {
-        "PARSEUR_API_KEY": "YOUR_PARSEUR_API_KEY"
-      }
-    }
-  }
-}
-```
-
-Reload Cursor after editing the file.
-
-### Cursor From The Command Line
-
-For a new project-level config, you can create the file from the terminal.
-
-User installation:
-
-```bash
-mkdir -p .cursor
-cat > .cursor/mcp.json <<'JSON'
-{
-  "mcpServers": {
-    "parseur": {
-      "command": "uvx",
-      "args": ["--from", "parseur-py[mcp]", "parseur-py"],
-      "env": {
-        "PARSEUR_API_KEY": "YOUR_PARSEUR_API_KEY"
-      }
-    }
-  }
-}
-JSON
-```
-
-Developer installation:
-
-```bash
-mkdir -p .cursor
-cat > .cursor/mcp.json <<'JSON'
-{
-  "mcpServers": {
-    "parseur": {
-      "command": "parseur-mcp",
-      "env": {
-        "PARSEUR_API_KEY": "YOUR_PARSEUR_API_KEY"
-      }
-    }
-  }
-}
-JSON
-```
-
-If `.cursor/mcp.json` already contains other MCP servers, merge the `parseur`
-block instead of replacing the whole file.
 
 ## What To Try First
 
-Once Parseur is connected, ask your assistant something simple:
+Ask your assistant:
 
 ```text
 List my Parseur mailboxes.
@@ -321,32 +175,22 @@ Create a Parseur mailbox named "Vendor invoices", upload this PDF to it, wait
 for parsing to finish, and show me the extracted result.
 ```
 
-For exports:
-
-```text
-Export the parsed results from mailbox 12345 as CSV.
-```
-
 ## How The Workflow Works
-
-The tools follow the normal Parseur mailbox lifecycle:
 
 1. Create or choose a mailbox.
 2. Upload a document with `upload_file` or `upload_text`.
-3. Wait for parsing to finish with `upload_file_and_wait`, `upload_text_and_wait`, or `wait_for_document`.
-4. Read the parsed result from the document.
-5. Export data or push results to your own webhook.
+3. Wait for parsing with `upload_file_and_wait`, `upload_text_and_wait`, or
+   `wait_for_document`.
+4. Read the parsed result.
+5. Export data or push results to a webhook.
 
-Important details:
-
-- `upload_file` takes an absolute file path. The MCP server runs locally, so it can read files from your machine.
-- No base64 upload is needed.
-- Parsing is asynchronous. Use the `*_and_wait` tools when you want the assistant to wait for the final result.
-- Destructive tools such as `delete_*` are marked as destructive so clients can ask for confirmation.
+`upload_file` takes an absolute path. The server can read it because stdio runs
+on the client machine. Destructive tools such as `delete_*` are marked as
+destructive so MCP clients can ask for confirmation.
 
 ## Troubleshooting
 
-### The assistant says the server is unavailable
+### The server looks idle
 
 Check that `uvx` works:
 
@@ -354,33 +198,23 @@ Check that `uvx` works:
 uvx --from "parseur-py[mcp]" parseur-py
 ```
 
-The command starts an MCP stdio server and waits for MCP messages, so it may look
-idle. Stop it with `Ctrl+C`.
+An MCP stdio server waits silently for MCP messages. Stop it with `Ctrl+C`.
 
 ### Authentication fails
 
-Make sure the config contains:
+For OAuth, ensure no API key is configured, then run `parseur login` to restart
+the browser flow. Do not paste an OAuth access token into the configuration.
 
-```json
-"env": {
-  "PARSEUR_API_KEY": "YOUR_PARSEUR_API_KEY"
-}
-```
+For API-key authentication, verify `PARSEUR_API_KEY` and ensure the key is
+still valid in Parseur.
 
-Also check that the key is valid in Parseur.
-
-### The assistant cannot find a file to upload
+### A file cannot be found
 
 Use an absolute path:
 
 ```text
 Upload /Users/alex/Documents/invoice.pdf to mailbox 12345.
 ```
-
-### I already have other MCP servers configured
-
-Do not replace the whole config file. Add only the `parseur` entry inside the
-existing `mcpServers` object.
 
 ## Reference
 

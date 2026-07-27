@@ -98,19 +98,34 @@ pytest tests/integration -v
 
 ---
 
-### Initialize your configuration
+### Authentication
 
-Store your Parseur API credentials securely:
+Parseur supports two independent authentication methods. Choose one:
 
-```bash
-parseur init --api-key YOUR_PARSEUR_API_KEY
-```
+1. **OAuth 2.0 (recommended for interactive use and MCP):**
 
-Your config is saved (by default) in:
+   ```bash
+   parseur login
+   ```
 
-```
-~/.parseur.conf
-```
+   Parseur opens the login page in your browser and returns to a temporary
+   callback on your machine. Credentials are stored in
+   `~/.parseur.oauth.json` with user-only permissions and renewed
+   automatically. You never copy an OAuth access token.
+
+2. **API key (recommended for headless environments and automation):**
+
+   ```bash
+   parseur init --api-key YOUR_PARSEUR_API_KEY
+   ```
+
+   The key is saved in `~/.parseur.conf`. For the MCP server, it can instead be
+   supplied with the `PARSEUR_API_KEY` environment variable.
+
+The same two methods work for the CLI, Python client, and local MCP server.
+When an API key is present, it takes priority. Otherwise, stored OAuth
+credentials are used; on the first MCP start, the login page opens
+automatically. See [MCP authentication](MCP.md#authentication).
 
 ---
 
@@ -260,12 +275,13 @@ uvx --from "parseur-py[mcp]" parseur-py
 
 ## 🛠️ Configuration
 
-Your API token and settings are stored in a simple INI file:
+OAuth and API-key authentication are both supported. Run `parseur login` for
+OAuth, or store an API key and API base in a simple INI file:
 
-```
+```ini
 [parseur]
-api_token = YOUR_API_KEY
-base_url = https://api.parseur.com
+api_key = YOUR_API_KEY
+api_base = https://api.parseur.com
 ```
 
 You can customize the path by setting \`--config-path\` in your calls if needed.
@@ -284,6 +300,10 @@ parseur.api_key = "YOUR_API_KEY"
 for mailbox in parseur.Mailbox.list():
     print(mailbox.name)
 ```
+
+This example uses authentication method 2, an API key. To use method 1, run
+`parseur login` once and leave `parseur.api_key` unset; the Python client then
+uses the stored OAuth credentials and refreshes them automatically.
 
 ### Per-call API key override
 
