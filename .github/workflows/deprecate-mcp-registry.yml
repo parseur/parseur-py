@@ -1,0 +1,18 @@
+
+  name: Deprecate MCP Registry entry
+
+  on: workflow_dispatch
+
+  jobs:
+    deprecate:
+      runs-on: ubuntu-latest
+      permissions:
+        id-token: write
+      steps:
+        - run: curl -L
+  "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar
+  xz mcp-publisher
+        - run: ./mcp-publisher login github-oidc
+        - run: ./mcp-publisher status --status deprecated --all-versions --yes --message "Use the hosted server at 
+  https://api.parseur.com/mcp" io.github.parseur/parseur-py
+
