@@ -29,7 +29,12 @@ from typing import Annotated, Any, Dict, List, Optional
 try:
     from mcp.server.fastmcp import FastMCP
     from mcp.types import ToolAnnotations
-except ImportError as e:  # pragma: no cover - exercised only without the extra
+except ImportError as e:
+    if e.name != "mcp":
+        # `mcp` is installed but could not be loaded (for example mcp 2.x, which
+        # removed `mcp.server.fastmcp`): the install hint would be wrong here,
+        # so surface the real error.
+        raise
     raise ImportError(
         "The MCP server requires the 'mcp' package. "
         'Please install with: pip install "parseur-py[mcp]"'

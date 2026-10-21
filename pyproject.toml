@@ -24,7 +24,8 @@ listener = [
 mcp = [
     # FastMCP tool `title` + `structured_output` (used by the server) require a
     # recent SDK; pydantic is imported directly (mcp ships it, declared here too).
-    "mcp>=1.18.0",
+    # mcp 2.x removed `mcp.server.fastmcp`, which the server imports.
+    "mcp>=1.18.0,<2",
     "pydantic>=2.0",
 ]
 
