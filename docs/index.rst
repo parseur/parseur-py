@@ -45,7 +45,6 @@ Features
 - 📤 **Upload** files and email content
 - 🌐 Manage **Webhooks** (create, delete, get, list, enable, pause)
 - 🛠️ Full-featured **CLI** included
-- 🤖 Built-in **MCP server** to drive Parseur from AI assistants
 
 
 Contents

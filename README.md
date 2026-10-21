@@ -1,5 +1,3 @@
-<!-- mcp-name: io.github.parseur/parseur-py -->
-
 # 🤖🧙parseur-py
 
 **parseur-py** is a modern Python client for the [Parseur](https://parseur.com) API.
@@ -26,7 +24,6 @@ Built to help you automate document parsing at scale, parseur-py makes integrati
 ✅ Manage custom webhooks for real-time events  
 ✅ Listen to events in real time with a temporary webhook & tunnel  
 ✅ Fully-featured **Command Line Interface (CLI)**  
-✅ Built-in **MCP server** to drive Parseur from AI assistants (Claude, Cursor, …)
 
 ---
 
@@ -56,12 +53,6 @@ With event listener support (Flask + localtunnel)
 
 ```bash
 pip install "parseur-py[listener]"
-```
-
-With MCP server support (use Parseur from AI assistants)
-
-```bash
-pip install "parseur-py[mcp]"
 ```
 
 ### Install the package from source
@@ -190,7 +181,6 @@ for a full list of available commands.
 - **create-webhook / get-webhook / list-webhooks / delete-webhook**: Create, get, list, and delete custom webhook integrations.
 - **enable-webhook / pause-webhook**: Activate or pause a webhook for a specific mailbox.
 - **listen**: Create a temporary webhook and listen to events in real time (with optional redirect & silent mode)
-- **mcp**: Run the Parseur MCP server so AI assistants can manage your account (requires `[mcp]`)
 
 ---
 
@@ -244,17 +234,7 @@ Your webhook endpoint will receive POST notifications with Parseur payloads, ena
 
 ## 🤖 MCP Server (AI assistants)
 
-**parseur-py** ships an [MCP](https://modelcontextprotocol.io) server that exposes Parseur as tools any MCP-compatible AI assistant (Claude Desktop, Codex, Cursor, Claude Code, and others) can call directly.
-
-Start with [MCP.md](MCP.md) if you want to connect Parseur to Claude, Codex, or Cursor. It separates the recommended user setup from the developer setup and includes copy-paste configs for each client.
-
-The full tool reference is in [MCP-TOOLS.md](MCP-TOOLS.md), and maintainer publishing instructions are in [MCP-PUBLISHING.md](MCP-PUBLISHING.md).
-
-Quick zero-install command:
-
-```bash
-uvx --from "parseur-py[mcp]" parseur-py
-```
+Parseur hosts an [MCP](https://modelcontextprotocol.io) server at `https://api.parseur.com/mcp`. Add this URL to any MCP-compatible AI assistant (Claude, Codex, Cursor, …) to drive Parseur from it. No local install is needed.
 
 ---
 

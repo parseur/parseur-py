@@ -205,6 +205,3 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
-
-# Local MCP client config (may contain a real API key)
-claude_desktop_config.json
