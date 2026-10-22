@@ -1,0 +1,28 @@
+name: Deprecate MCP Registry entry
+
+# One-off: marks io.github.parseur/parseur-py as deprecated on
+# https://registry.modelcontextprotocol.io in favor of the hosted server at
+# https://api.parseur.com/mcp. Delete this workflow once it has run.
+on: workflow_dispatch
+
+jobs:
+  deprecate:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # required for GitHub OIDC authentication
+    steps:
+      - name: Install mcp-publisher v1.8.1
+        run: |
+          curl -fsSL -o mcp-publisher.tar.gz \
+            "https://github.com/modelcontextprotocol/registry/releases/download/v1.8.1/mcp-publisher_linux_amd64.tar.gz"
+          echo "a06c9096dcb9727c13555b6be26c7effa707b01f06a4c561ba7a3635443cf2cc  mcp-publisher.tar.gz" | sha256sum -c
+          tar xzf mcp-publisher.tar.gz mcp-publisher
+
+      - name: Authenticate with the registry (GitHub OIDC)
+        run: ./mcp-publisher login github-oidc
+
+      - name: Deprecate all versions
+        run: |
+          ./mcp-publisher status --status deprecated --all-versions --yes \
+            --message "Use the hosted server at https://api.parseur.com/mcp" \
+            io.github.parseur/parseur-py
