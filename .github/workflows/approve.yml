@@ -1,0 +1,96 @@
+name: Approve PR
+
+# Approves a PR as github-actions[bot] after a code review done outside this
+# workflow (typically by Claude in a local session). GitHub forbids authors
+# from approving their own PRs; the bot's approval satisfies the ruleset.
+#
+# The workflow must be dispatched on the PR's head branch (--ref); it only
+# approves the open PR whose head is that branch. Note the workflow file that
+# runs is the one on that branch, so review approve.yml changes too. The PR
+# author may dispatch it: the review happens outside GitHub, this only lends
+# the bot identity.
+#
+# Example (from the PR branch):
+#   gh workflow run approve.yml --ref "$(git branch --show-current)" \
+#     -f head_sha=$(git rev-parse HEAD) \
+#     -f reviewed=true \
+#     -f review_summary="Checked X, Y, Z. Tests pass locally."
+#
+# This repo has no CI test workflow, so unlike parser-server this does not
+# check a test run: run the tests locally before dispatching.
+#
+# The approval is pinned to head_sha. For later pushes to need a new review,
+# the master ruleset must require an approval and set "Require approval of
+# the most recent reviewable push", as parser-server does.
+
+on:
+  workflow_dispatch:
+    inputs:
+      head_sha:
+        description: Head commit SHA that was reviewed
+        required: true
+        type: string
+      reviewed:
+        description: Confirm a code review was performed on head_sha
+        required: true
+        type: boolean
+        default: false
+      review_summary:
+        description: What was reviewed (posted as the approval body)
+        required: true
+        type: string
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  approve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    defaults:
+      run:
+        shell: bash
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      BRANCH: ${{ github.ref_name }}
+      DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+      HEAD_SHA: ${{ inputs.head_sha }}
+      REVIEWED: ${{ inputs.reviewed }}
+      REVIEW_SUMMARY: ${{ inputs.review_summary }}
+      ACTOR: ${{ github.actor }}
+
+    steps:
+      - name: Find the PR for this branch
+        run: |
+          set -euo pipefail
+          [ "$BRANCH" != "$DEFAULT_BRANCH" ] \
+            || { echo "::error::Dispatch this workflow on the PR branch (--ref <branch>), not $DEFAULT_BRANCH."; exit 1; }
+          # Ignore fork PRs that happen to use the same branch name.
+          prs=$(gh pr list --head "$BRANCH" --state open --json number,isCrossRepository \
+            -q '.[] | select(.isCrossRepository | not) | .number')
+          [ "$(wc -w <<< "$prs")" -eq 1 ] \
+            || { echo "::error::Expected exactly one open PR with head branch $BRANCH, found: ${prs:-none}."; exit 1; }
+          echo "PR=$prs" >> "$GITHUB_ENV"
+
+      - name: Check review and head SHA
+        run: |
+          set -euo pipefail
+          echo "::notice::Review is mandatory before dispatching this workflow."
+          [[ "$HEAD_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::head_sha must be a 40-character commit SHA."; exit 1; }
+          [ "$REVIEWED" = "true" ] && [[ "$REVIEW_SUMMARY" =~ [^[:space:]] ]] \
+            || { echo "::error::Review is mandatory: set reviewed=true and a review_summary."; exit 1; }
+          actual=$(gh pr view "$PR" --json headRefOid -q .headRefOid)
+          [ "$actual" = "$HEAD_SHA" ] \
+            || { echo "::error::PR head is $actual, not the reviewed $HEAD_SHA."; exit 1; }
+
+      - name: Approve
+        run: |
+          # Pin the approval to the reviewed commit, so a push that lands after
+          # the check above is not approved.
+          gh api "repos/$GH_REPO/pulls/$PR/reviews" \
+            -f commit_id="$HEAD_SHA" -f event=APPROVE \
+            -f body="Reviewed by Claude before approval (dispatched by $ACTOR, commit $HEAD_SHA).
+
+          $REVIEW_SUMMARY" --silent
