@@ -18,6 +18,10 @@ name: Approve PR
 #
 # This repo has no CI test workflow, so unlike parser-server this does not
 # check a test run: run the tests locally before dispatching.
+#
+# The approval is pinned to head_sha. For later pushes to need a new review,
+# the master ruleset must require an approval and set "Require approval of
+# the most recent reviewable push", as parser-server does.
 
 on:
   workflow_dispatch:
@@ -63,7 +67,9 @@ jobs:
           set -euo pipefail
           [ "$BRANCH" != "$DEFAULT_BRANCH" ] \
             || { echo "::error::Dispatch this workflow on the PR branch (--ref <branch>), not $DEFAULT_BRANCH."; exit 1; }
-          prs=$(gh pr list --head "$BRANCH" --state open --json number -q '.[].number')
+          # Ignore fork PRs that happen to use the same branch name.
+          prs=$(gh pr list --head "$BRANCH" --state open --json number,isCrossRepository \
+            -q '.[] | select(.isCrossRepository | not) | .number')
           [ "$(wc -w <<< "$prs")" -eq 1 ] \
             || { echo "::error::Expected exactly one open PR with head branch $BRANCH, found: ${prs:-none}."; exit 1; }
           echo "PR=$prs" >> "$GITHUB_ENV"
@@ -81,6 +87,10 @@ jobs:
 
       - name: Approve
         run: |
-          gh pr review "$PR" --approve --body "Reviewed by Claude before approval (dispatched by $ACTOR, commit $HEAD_SHA).
+          # Pin the approval to the reviewed commit, so a push that lands after
+          # the check above is not approved.
+          gh api "repos/$GH_REPO/pulls/$PR/reviews" \
+            -f commit_id="$HEAD_SHA" -f event=APPROVE \
+            -f body="Reviewed by Claude before approval (dispatched by $ACTOR, commit $HEAD_SHA).
 
-          $REVIEW_SUMMARY"
+          $REVIEW_SUMMARY" --silent
