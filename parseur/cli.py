@@ -660,29 +660,5 @@ def listen(
     )
 
 
-# ------------------------
-# MCP server
-# ------------------------
-
-
-@cli.command("mcp")
-def mcp():
-    """
-    Run the Parseur MCP server (requires the [mcp] extra).
-
-    Exposes Parseur as Model Context Protocol tools over stdio so AI
-    assistants (Claude Desktop, Cursor, ...) can manage your mailboxes,
-    documents, and webhooks.
-
-    Install with: pip install "parseur-py[mcp]"
-    """
-    try:
-        from . import mcp_server
-    except ImportError as e:
-        raise click.ClickException(str(e))
-
-    mcp_server.main()
-
-
 if __name__ == "__main__":
     cli()

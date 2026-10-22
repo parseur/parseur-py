@@ -264,9 +264,8 @@ class Document:
         """
         Upload a local file to a mailbox.
 
-        The file is read from the filesystem of the machine running this code
-        (for an MCP server, that is the server's machine — usually the same as
-        the client when launched locally by Claude Desktop). ``~`` is expanded.
+        The file is read from the filesystem of the machine running this code.
+        ``~`` is expanded.
 
         :raises FileNotFoundError: If no readable file exists at ``file_path``.
         """
@@ -274,7 +273,7 @@ class Document:
         if not path.is_file():
             raise FileNotFoundError(
                 f"No file at '{path}'. The file must exist on the machine "
-                f"running the Parseur client/MCP server; pass an absolute path."
+                f"running the Parseur client; pass an absolute path."
             )
         with open(path, "rb") as file:
             files = {"file": (path.name, file)}
