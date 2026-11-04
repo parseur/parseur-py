@@ -7,4 +7,4 @@ sphinx-autodoc-typehints>=3.0.1
 # Better theme for ReadTheDocs
 furo>=2025.12.19
 # For generating API docs from source
-sphinx-autoapi>=3.8.0
+sphinx-autoapi>=3.8.1
